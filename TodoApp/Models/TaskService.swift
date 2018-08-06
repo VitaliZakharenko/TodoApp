@@ -12,34 +12,33 @@ class TaskService {
     
     static let shared = TaskService()
     
-    var tasks = [Task]()
+    private var categories = [TaskCategory]()
     
     
-    func add(task: Task){
-        if !tasks.contains(where: {$0.id == task.id}){
-            tasks.append(task)
-        }
+    init(){
+        
+        let pendingTasks = predefinedTestTasks()
+        let pendingCategory = TaskCategory(id: "", name: " ")
+        pendingCategory.add(tasks: pendingTasks)
+        let completedTasks = [Task]()
+        let completedCategory = TaskCategory(id: "", name: "Completed")
+        completedCategory.add(tasks: completedTasks)
+        
+        categories.append(pendingCategory)
+        categories.append(completedCategory)
+        
     }
     
-    func remove(task: Task){
-        if let index = tasks.index(where: {$0.id == task.id}){
-            tasks.remove(at: index)
-        }
-    }
-    
-    func getTasks() -> [Task] {
-        // return tasks
-        return predefinedTestTasks()
+    func getCategories() -> [TaskCategory] {
+        return categories
     }
     
     func getCompletedTasks() -> [Task] {
-        let tasks = getTasks()
-        return tasks.filter({$0.isCompleted})
+        return categories[1].getTasks()
     }
     
     func getPendingTasks() -> [Task] {
-        let tasks = getTasks()
-        return tasks.filter({!$0.isCompleted})
+        return categories[0].getTasks()
     }
     
     
