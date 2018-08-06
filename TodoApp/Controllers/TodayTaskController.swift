@@ -17,8 +17,9 @@ class TodayTaskController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         
+        let nib = UINib(nibName: "TaskCell", bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.TASK_CELL)
         tableView.delegate = self
         tableView.dataSource = self
     }
