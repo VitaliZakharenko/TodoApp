@@ -17,11 +17,27 @@ class TodayTaskController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         
+        let nib = UINib(nibName: "TaskCell", bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.TASK_CELL)
         tableView.delegate = self
         tableView.dataSource = self
     }
+    
+    //MARK: - Actions
+    
+    @IBAction func editTaskList(_ sender: UIBarButtonItem) {
+        
+        if tableView.isEditing == true {
+            tableView.setEditing(false, animated: true)
+            sender.title = "Edit"
+        }
+        else {
+            tableView.setEditing(true, animated: true)
+            sender.title = "Done"
+        }
+    }
+    
 
 }
 
@@ -32,11 +48,34 @@ extension TodayTaskController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return " "
+            return TaskService.shared.getCategories()[section].name
         case 1:
-            return "Completed"
+            return TaskService.shared.getCategories()[section].name
         default:
             fatalError("Unknown section \(section)")
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let (task, category): (Task, TaskCategory) = {
+                switch indexPath.section {
+                case 0:
+                    return (TaskService.shared.getPendingTasks()[indexPath.row],
+                            TaskService.shared.getCategories()[indexPath.section])
+                case 1:
+                    return (TaskService.shared.getCompletedTasks()[indexPath.row],
+                            TaskService.shared.getCategories()[indexPath.section])
+                default:
+                    fatalError("Unknown section \(indexPath.section)")
+                }
+            }()
+            category.remove(task: task)
+            tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
     
