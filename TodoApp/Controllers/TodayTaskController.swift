@@ -14,6 +14,9 @@ class TodayTaskController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
+    
+    //MARK: - Lifecycle
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,13 +31,19 @@ class TodayTaskController: UIViewController {
     
     @IBAction func editTaskList(_ sender: UIBarButtonItem) {
         
-        if tableView.isEditing == true {
-            tableView.setEditing(false, animated: true)
-            sender.title = "Edit"
-        }
-        else {
-            tableView.setEditing(true, animated: true)
-            sender.title = "Done"
+        tableView.isEditing = !tableView.isEditing
+        sender.title = tableView.isEditing ? "Done" : "Edit"
+        
+    }
+    
+    
+    //MARK: - Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == Consts.Identifiers.SHOW_ADD_TASK_SEGUE {
+            if let destination = segue.destination as? AddTaskViewController {
+                destination.addTaskSaveDelegate = self
+            }
         }
     }
     
@@ -120,9 +129,23 @@ extension TodayTaskController: UITableViewDataSource {
         let task = tasks[indexPath.row]
         
         cell.taskNameLabel.text = task.name
-        cell.taskDescriptionLabel.text = "No description"
+        cell.taskDescriptionLabel.text = task.description ?? "No description"
         cell.taskDateLabel.text = task.planned.formattedString()
         
         return cell
     }
+}
+
+
+//MARK: - AddTaskSaveDelegate
+
+extension TodayTaskController: AddTaskSaveDelegate {
+    
+    func save(task: Task) {
+        TaskService.shared.getCategories()[0].add(task: task)
+        tableView.reloadData()
+    }
+    
+    
+    
 }

@@ -13,6 +13,7 @@ class Task {
     // not used yet, empty string
     let id: String
     var name: String
+    var description: String?
     var planned: Date
     var completed: Date?
     
@@ -22,9 +23,10 @@ class Task {
         }
     }
     
-    init(id: String, name: String, planned: Date){
+    init(id: String, name: String, description: String?, planned: Date){
         self.id = id
         self.name = name
+        self.description = description
         self.planned = planned
     }
     
