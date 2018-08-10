@@ -43,9 +43,9 @@ class TaskService {
     
     
     private func predefinedTestTasks() -> [Task] {
-        let t1 = Task(id: "", name: "First", description: nil, planned: Date())
-        let t2 = Task(id: "", name: "Second", description: nil, planned: Date())
-        let t3 = Task(id: "", name: "TestTask", description: nil, planned: Date())
+        let t1 = Task(id: "", name: "First", description: nil, remindDate: Date())
+        let t2 = Task(id: "", name: "Second", description: nil, remindDate: Date())
+        let t3 = Task(id: "", name: "TestTask", description: nil, remindDate: Date())
         
         return [t1, t2, t3]
     }

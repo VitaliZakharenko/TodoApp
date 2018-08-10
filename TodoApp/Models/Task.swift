@@ -14,7 +14,7 @@ class Task {
     let id: String
     var name: String
     var description: String?
-    var planned: Date
+    var remindDate: Date?
     var completed: Date?
     
     var isCompleted: Bool {
@@ -23,11 +23,17 @@ class Task {
         }
     }
     
-    init(id: String, name: String, description: String?, planned: Date){
+    var isReminded: Bool {
+        get {
+            return remindDate != nil
+        }
+    }
+    
+    init(id: String, name: String, description: String?, remindDate: Date?){
         self.id = id
         self.name = name
         self.description = description
-        self.planned = planned
+        self.remindDate = remindDate
     }
     
     func setCompleted(date: Date){

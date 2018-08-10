@@ -41,7 +41,7 @@ class TodayTaskController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == Consts.Identifiers.SHOW_ADD_TASK_SEGUE {
-            if let destination = segue.destination as? AddTaskViewController {
+            if let destination = segue.destination as? AddTaskController {
                 destination.addTaskSaveDelegate = self
             }
         }
@@ -130,7 +130,7 @@ extension TodayTaskController: UITableViewDataSource {
         
         cell.taskNameLabel.text = task.name
         cell.taskDescriptionLabel.text = task.description ?? "No description"
-        cell.taskDateLabel.text = task.planned.formattedString()
+        cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : "No reminder"
         
         return cell
     }

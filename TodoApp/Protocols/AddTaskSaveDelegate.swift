@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol AddTaskSaveDelegate {
+protocol AddTaskSaveDelegate: AnyObject {
     
     func save(task: Task)
 }
