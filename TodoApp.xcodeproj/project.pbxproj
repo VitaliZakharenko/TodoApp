@@ -12,6 +12,7 @@
 		F8367AB321199950008C4E6C /* AddTaskController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8367AB221199950008C4E6C /* AddTaskController.swift */; };
 		F8367AB52119C37F008C4E6C /* AddTask.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8367AB42119C37F008C4E6C /* AddTask.xib */; };
 		F8367AB72119C5EB008C4E6C /* AddTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8367AB62119C5EB008C4E6C /* AddTask.swift */; };
+		F838EFE4211D8FDB00D6225E /* Priority.swift in Sources */ = {isa = PBXBuildFile; fileRef = F838EFE3211D8FDB00D6225E /* Priority.swift */; };
 		F85B2FC621122F7E0009177B /* Consts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85B2FC521122F7E0009177B /* Consts.swift */; };
 		F85B2FC92112346D0009177B /* Date+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85B2FC82112346D0009177B /* Date+String.swift */; };
 		F87526282112286D0088E746 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87526272112286D0088E746 /* TaskCell.swift */; };
@@ -50,6 +51,7 @@
 		F8367AB221199950008C4E6C /* AddTaskController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskController.swift; sourceTree = "<group>"; };
 		F8367AB42119C37F008C4E6C /* AddTask.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddTask.xib; sourceTree = "<group>"; };
 		F8367AB62119C5EB008C4E6C /* AddTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTask.swift; sourceTree = "<group>"; };
+		F838EFE3211D8FDB00D6225E /* Priority.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Priority.swift; sourceTree = "<group>"; };
 		F85B2FC521122F7E0009177B /* Consts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Consts.swift; sourceTree = "<group>"; };
 		F85B2FC82112346D0009177B /* Date+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+String.swift"; sourceTree = "<group>"; };
 		F87526272112286D0088E746 /* TaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
@@ -102,6 +104,14 @@
 				F830267E211C4361007638FD /* AddTaskSaveDelegate.swift */,
 			);
 			path = Protocols;
+			sourceTree = "<group>";
+		};
+		F838EFE2211D8FB900D6225E /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+				F838EFE3211D8FDB00D6225E /* Priority.swift */,
+			);
+			path = Enums;
 			sourceTree = "<group>";
 		};
 		F85B2FC421122F5C0009177B /* Consts */ = {
@@ -189,6 +199,7 @@
 				F830267D211C4334007638FD /* Protocols */,
 				F85B2FC72112344D0009177B /* Extensions */,
 				F8BE48AD211C7C7F00157C6B /* Storyboards */,
+				F838EFE2211D8FB900D6225E /* Enums */,
 				F87F54D121108E2E00ED206E /* Assets.xcassets */,
 				F87F54D621108E2E00ED206E /* Info.plist */,
 			);
@@ -369,6 +380,7 @@
 				F87526282112286D0088E746 /* TaskCell.swift in Sources */,
 				F8367AB321199950008C4E6C /* AddTaskController.swift in Sources */,
 				F87F54CB21108E2E00ED206E /* AppDelegate.swift in Sources */,
+				F838EFE4211D8FDB00D6225E /* Priority.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

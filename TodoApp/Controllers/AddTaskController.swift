@@ -18,8 +18,11 @@ class AddTaskController: UITableViewController {
     @IBOutlet weak var taskDescriptionTextView: UITextView!
     @IBOutlet weak var remindMeSwitch: UISwitch!
     @IBOutlet weak var remindDateLabel: UILabel!
+    @IBOutlet weak var selectedPriorityLabel: UILabel!
+    
     
     private var remindDate: Date = Date()
+    private var taskPriority = Priority.none
     
     
     let remindDateFormatter: DateFormatter = {
@@ -32,6 +35,82 @@ class AddTaskController: UITableViewController {
         super.viewDidLoad()
         taskNameTextField.delegate = self
         remindDateLabel.text = remindDateFormatter.string(from: remindDate)
+        tableView.tableFooterView = UIView()
+        updatePriorityLabel()
+    }
+    
+    
+    //MARK: - UITableViewDelegate and UITableViewDataSource
+    
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        switch indexPath.section {
+        case 1 where indexPath.row == 0:
+            return nil
+        case 1 where indexPath.row == 1:
+            if !remindMeSwitch.isOn{
+                return nil
+            }
+        default:
+            return indexPath
+        }
+        
+        return indexPath
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        switch indexPath.section {
+        case 1 where indexPath.row == 1:
+            selectRemindDateRowClicked()
+        case 2 where indexPath.row == 0:
+            selectPriorityRowClicked()
+        
+        default:
+            ()
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    
+    //MARK: - Private Methods
+    
+    private func selectPriorityRowClicked(){
+        showSelectPriorityController()
+    }
+    
+    private func selectRemindDateRowClicked(){
+    }
+    
+    private func showSelectPriorityController(){
+        let alertController = UIAlertController(title: "Select Priority", message: nil, preferredStyle: .actionSheet)
+        
+        let priorities: [Priority] = [.none, .low, .medium, .high]
+        for priority in priorities {
+            let action = UIAlertAction(title: priority.rawValue, style: .default, handler: selectTaskPriority)
+            alertController.addAction(action)
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: selectTaskPriority)
+        alertController.addAction(cancelAction)
+        present(alertController, animated: true, completion: nil)
+        
+    }
+    
+    private func selectTaskPriority(alert: UIAlertAction){
+        guard let priorityString = alert.title,
+              priorityString != "Cancel" else {
+            return
+        }
+        
+        if let priority = Priority(rawValue: priorityString) {
+            taskPriority = priority
+            updatePriorityLabel()
+        }
+    }
+    
+    
+    private func updatePriorityLabel(){
+        selectedPriorityLabel.text = taskPriority.rawValue
     }
     
     
@@ -44,16 +123,14 @@ class AddTaskController: UITableViewController {
 
     @IBAction func saveTask(_ sender: UIBarButtonItem) {
         
-        
         guard let name = taskNameTextField.text,
             let descriptionString = taskDescriptionTextView.text else {
                 fatalError("Wrong task parameters")
         }
-        
         let description = descriptionString.isEmpty ? nil : descriptionString
         let remindDate = remindMeSwitch.isOn ? self.remindDate : nil
         
-        let task = Task(id: "", name: name, description: description, remindDate: remindDate)
+        let task = Task(id: "", name: name, description: description, remindDate: remindDate, priority: taskPriority)
         
         guard let addDelegate = addTaskSaveDelegate else {
             fatalError("Add delegate is nil")

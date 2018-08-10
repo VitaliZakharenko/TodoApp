@@ -25,6 +25,8 @@ class TodayTaskController: UIViewController {
         tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.TASK_CELL)
         tableView.delegate = self
         tableView.dataSource = self
+        
+        tableView.tableFooterView = UIView()
     }
     
     //MARK: - Actions

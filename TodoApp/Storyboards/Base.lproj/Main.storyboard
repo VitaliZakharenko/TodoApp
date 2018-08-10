@@ -170,16 +170,17 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="None" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YCp-fP-BlS">
-                                                    <rect key="frame" x="236" y="11" width="42" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="None" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YCp-fP-BlS">
+                                                    <rect key="frame" x="227" y="11" width="41" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="YCp-fP-BlS" firstAttribute="trailing" secondItem="7f7-Sk-mXA" secondAttribute="trailingMargin" constant="-10" id="Gcg-hg-SWv"/>
                                                 <constraint firstItem="f7U-2t-OcL" firstAttribute="leading" secondItem="7f7-Sk-mXA" secondAttribute="leadingMargin" constant="5" id="N0w-7y-cuB"/>
+                                                <constraint firstItem="YCp-fP-BlS" firstAttribute="centerY" secondItem="7f7-Sk-mXA" secondAttribute="centerY" id="oZr-do-VWv"/>
                                                 <constraint firstItem="f7U-2t-OcL" firstAttribute="centerY" secondItem="7f7-Sk-mXA" secondAttribute="centerY" id="rib-0K-TDt"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -233,6 +234,7 @@
                     <connections>
                         <outlet property="remindDateLabel" destination="mZq-Gc-hEM" id="IVi-EL-oYh"/>
                         <outlet property="remindMeSwitch" destination="Sri-S2-vit" id="xrY-lE-5aY"/>
+                        <outlet property="selectedPriorityLabel" destination="YCp-fP-BlS" id="gya-9P-TMx"/>
                         <outlet property="taskDescriptionTextView" destination="rGB-Iz-gcI" id="7tl-kl-XjV"/>
                         <outlet property="taskNameTextField" destination="JKB-Lu-PDW" id="51W-Gx-seb"/>
                     </connections>
