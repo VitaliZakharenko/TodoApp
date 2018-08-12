@@ -12,6 +12,9 @@
 		F8367AB321199950008C4E6C /* AddTaskController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8367AB221199950008C4E6C /* AddTaskController.swift */; };
 		F8367AB52119C37F008C4E6C /* AddTask.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8367AB42119C37F008C4E6C /* AddTask.xib */; };
 		F8367AB72119C5EB008C4E6C /* AddTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8367AB62119C5EB008C4E6C /* AddTask.swift */; };
+		F838DE2D211F1CEB000F49CD /* SelectDate.xib in Resources */ = {isa = PBXBuildFile; fileRef = F838DE2C211F1CEB000F49CD /* SelectDate.xib */; };
+		F838DE2F211F21EF000F49CD /* SelectDateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F838DE2E211F21EF000F49CD /* SelectDateController.swift */; };
+		F838DE31211F93BB000F49CD /* SelectDateDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F838DE30211F93BB000F49CD /* SelectDateDelegate.swift */; };
 		F838EFE4211D8FDB00D6225E /* Priority.swift in Sources */ = {isa = PBXBuildFile; fileRef = F838EFE3211D8FDB00D6225E /* Priority.swift */; };
 		F85B2FC621122F7E0009177B /* Consts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85B2FC521122F7E0009177B /* Consts.swift */; };
 		F85B2FC92112346D0009177B /* Date+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85B2FC82112346D0009177B /* Date+String.swift */; };
@@ -51,6 +54,9 @@
 		F8367AB221199950008C4E6C /* AddTaskController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskController.swift; sourceTree = "<group>"; };
 		F8367AB42119C37F008C4E6C /* AddTask.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddTask.xib; sourceTree = "<group>"; };
 		F8367AB62119C5EB008C4E6C /* AddTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTask.swift; sourceTree = "<group>"; };
+		F838DE2C211F1CEB000F49CD /* SelectDate.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectDate.xib; sourceTree = "<group>"; };
+		F838DE2E211F21EF000F49CD /* SelectDateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectDateController.swift; sourceTree = "<group>"; };
+		F838DE30211F93BB000F49CD /* SelectDateDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectDateDelegate.swift; sourceTree = "<group>"; };
 		F838EFE3211D8FDB00D6225E /* Priority.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Priority.swift; sourceTree = "<group>"; };
 		F85B2FC521122F7E0009177B /* Consts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Consts.swift; sourceTree = "<group>"; };
 		F85B2FC82112346D0009177B /* Date+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+String.swift"; sourceTree = "<group>"; };
@@ -102,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				F830267E211C4361007638FD /* AddTaskSaveDelegate.swift */,
+				F838DE30211F93BB000F49CD /* SelectDateDelegate.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -146,6 +153,7 @@
 				F8752626211228470088E746 /* Cells */,
 				F8367AB42119C37F008C4E6C /* AddTask.xib */,
 				F8367AB62119C5EB008C4E6C /* AddTask.swift */,
+				F838DE2C211F1CEB000F49CD /* SelectDate.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -155,6 +163,7 @@
 			children = (
 				F87F54CC21108E2E00ED206E /* TodayTaskController.swift */,
 				F8367AB221199950008C4E6C /* AddTaskController.swift */,
+				F838DE2E211F21EF000F49CD /* SelectDateController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -343,6 +352,7 @@
 				F8367AB12117277D008C4E6C /* TaskCell.xib in Resources */,
 				F87F54D521108E2E00ED206E /* LaunchScreen.storyboard in Resources */,
 				F87F54D221108E2E00ED206E /* Assets.xcassets in Resources */,
+				F838DE2D211F1CEB000F49CD /* SelectDate.xib in Resources */,
 				F87F54D021108E2E00ED206E /* Main.storyboard in Resources */,
 				F8367AB52119C37F008C4E6C /* AddTask.xib in Resources */,
 			);
@@ -370,10 +380,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				F87F54FD21109FBE00ED206E /* TaskService.swift in Sources */,
+				F838DE2F211F21EF000F49CD /* SelectDateController.swift in Sources */,
 				F830267F211C4361007638FD /* AddTaskSaveDelegate.swift in Sources */,
 				F87F54FB21109DA300ED206E /* TaskCategory.swift in Sources */,
 				F87F54CD21108E2E00ED206E /* TodayTaskController.swift in Sources */,
 				F85B2FC92112346D0009177B /* Date+String.swift in Sources */,
+				F838DE31211F93BB000F49CD /* SelectDateDelegate.swift in Sources */,
 				F87F54F921109C4D00ED206E /* Task.swift in Sources */,
 				F85B2FC621122F7E0009177B /* Consts.swift in Sources */,
 				F8367AB72119C5EB008C4E6C /* AddTask.swift in Sources */,

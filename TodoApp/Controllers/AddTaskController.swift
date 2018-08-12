@@ -21,7 +21,7 @@ class AddTaskController: UITableViewController {
     @IBOutlet weak var selectedPriorityLabel: UILabel!
     
     
-    private var remindDate: Date = Date()
+    private var remindDate: Date?
     private var taskPriority = Priority.none
     
     
@@ -34,8 +34,8 @@ class AddTaskController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         taskNameTextField.delegate = self
-        remindDateLabel.text = remindDateFormatter.string(from: remindDate)
         tableView.tableFooterView = UIView()
+        updateRemindDateLabel()
         updatePriorityLabel()
     }
     
@@ -79,6 +79,9 @@ class AddTaskController: UITableViewController {
     }
     
     private func selectRemindDateRowClicked(){
+        let selectDateController = SelectDateController(nibName: "SelectDate", bundle: nil)
+        selectDateController.selectDateDelegate = self
+        navigationController?.pushViewController(selectDateController, animated: true)
     }
     
     private func showSelectPriorityController(){
@@ -111,6 +114,10 @@ class AddTaskController: UITableViewController {
     
     private func updatePriorityLabel(){
         selectedPriorityLabel.text = taskPriority.rawValue
+    }
+    
+    private func updateRemindDateLabel(){
+        remindDateLabel.text = remindDateFormatter.string(from: remindDate ?? Date())
     }
     
     
@@ -150,4 +157,24 @@ extension AddTaskController: UITextFieldDelegate {
         taskNameTextField.resignFirstResponder()
         return true
     }
+}
+
+//MARK: - SelectDateDelegate
+
+extension AddTaskController: SelectDateDelegate {
+    
+    func minimumDate() -> Date {
+        return Date()
+    }
+    
+    func dateFormatter() -> DateFormatter {
+        return remindDateFormatter
+    }
+    
+    
+    func dateSelected(date: Date){
+        remindDate = date
+        updateRemindDateLabel()
+    }
+    
 }
