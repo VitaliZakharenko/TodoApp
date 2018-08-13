@@ -21,13 +21,13 @@ class AddTaskController: UITableViewController {
     @IBOutlet weak var selectedPriorityLabel: UILabel!
     
     
-    private var remindDate: Date?
+    private var remindDate: Date = Date()
     private var taskPriority = Priority.none
     
     
     let remindDateFormatter: DateFormatter = {
         let fm = DateFormatter()
-        fm.dateFormat = "EEEE, d MMMM yyyy, HH:mm"
+        fm.dateFormat = "EEEE, d MMM yyyy, HH:mm"
         return fm
     }()
     
@@ -35,6 +35,8 @@ class AddTaskController: UITableViewController {
         super.viewDidLoad()
         taskNameTextField.delegate = self
         tableView.tableFooterView = UIView()
+        setupGestureRecognizerForKeyboardDissmiss()
+        setupSaveButton()
         updateRemindDateLabel()
         updatePriorityLabel()
     }
@@ -69,6 +71,24 @@ class AddTaskController: UITableViewController {
             ()
         }
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 44.0
+    }
+    
+    
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 44.0
+    }
+    
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let sectionView = Section(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 44.0))
+        let title = self.tableView(self.tableView, titleForHeaderInSection: section)
+        sectionView.titleLabel.text = title?.uppercased()
+        return sectionView
     }
     
     
@@ -117,7 +137,22 @@ class AddTaskController: UITableViewController {
     }
     
     private func updateRemindDateLabel(){
-        remindDateLabel.text = remindDateFormatter.string(from: remindDate ?? Date())
+        remindDateLabel.text = remindDateFormatter.string(from: remindDate)
+    }
+    
+    private func setupSaveButton(){
+        let taskName = taskNameTextField.text ?? ""
+        navigationItem.rightBarButtonItem?.isEnabled = !taskName.isEmpty
+    }
+    
+    private func setupGestureRecognizerForKeyboardDissmiss(){
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissTextViewKeyboard(_:)))
+        gestureRecognizer.cancelsTouchesInView = false
+        tableView.addGestureRecognizer(gestureRecognizer)
+    }
+    
+    @objc private func dismissTextViewKeyboard(_ sender: UITapGestureRecognizer) {
+        taskDescriptionTextView.endEditing(true)
     }
     
     
@@ -147,6 +182,7 @@ class AddTaskController: UITableViewController {
         
     }
     
+    
 }
 
 //MARK: - UITextFieldDelegate
@@ -155,6 +191,7 @@ extension AddTaskController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         taskNameTextField.resignFirstResponder()
+        setupSaveButton()
         return true
     }
 }
@@ -178,3 +215,4 @@ extension AddTaskController: SelectDateDelegate {
     }
     
 }
+

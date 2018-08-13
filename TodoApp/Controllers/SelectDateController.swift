@@ -39,6 +39,7 @@ class SelectDateController: UIViewController {
     //MARK: - Private Methods
     
     private func setupNavBar(){
+        navigationItem.title = "Choose Date"
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonClicked(_:)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneButtonClicked(_:)))
     }

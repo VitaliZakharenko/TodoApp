@@ -58,7 +58,7 @@
                                 <action selector="editTaskList:" destination="BYZ-38-t0r" id="NsU-QS-IKL"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="xu8-uy-VBH">
+                        <barButtonItem key="rightBarButtonItem" image="right_add_detail" id="xu8-uy-VBH">
                             <connections>
                                 <segue destination="wiQ-GD-fJh" kind="show" identifier="ShowAddTaskSegue" id="fG5-rH-0pD"/>
                             </connections>
@@ -93,7 +93,7 @@
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="What you have to do..." textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="JKB-Lu-PDW">
                                                     <rect key="frame" x="5" y="5" width="310" height="33.5"/>
                                                     <nil key="textColor"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <textInputTraits key="textInputTraits" returnKeyType="done"/>
                                                 </textField>
                                             </subviews>
@@ -189,15 +189,15 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="NOTES" id="7lC-Yj-IW8">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="80" id="nnN-ZA-KXJ">
-                                        <rect key="frame" x="0.0" y="288" width="320" height="80"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="nnN-ZA-KXJ">
+                                        <rect key="frame" x="0.0" y="288" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nnN-ZA-KXJ" id="MHe-VD-byC">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="79.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="rGB-Iz-gcI">
-                                                    <rect key="frame" x="5" y="5" width="310" height="69.5"/>
+                                                    <rect key="frame" x="5" y="5" width="310" height="33.5"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -219,13 +219,13 @@
                             <outlet property="delegate" destination="wiQ-GD-fJh" id="zO2-rJ-xnM"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="N6j-9x-yuW">
+                    <navigationItem key="navigationItem" title="AddItem" id="N6j-9x-yuW">
                         <barButtonItem key="leftBarButtonItem" title="Back" id="U74-ye-8em">
                             <connections>
                                 <action selector="backToTaskList:" destination="wiQ-GD-fJh" id="Suf-tI-O1K"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="FCm-Jk-R94">
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="FCm-Jk-R94">
                             <connections>
                                 <action selector="saveTask:" destination="wiQ-GD-fJh" id="XH7-jn-kRD"/>
                             </connections>
@@ -282,5 +282,6 @@
     <resources>
         <image name="TodayBarItem" width="48" height="34"/>
         <image name="TodayBarItemActive" width="48" height="34"/>
+        <image name="right_add_detail" width="24" height="24"/>
     </resources>
 </document>
