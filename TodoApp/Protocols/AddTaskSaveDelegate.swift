@@ -11,4 +11,5 @@ import Foundation
 protocol AddTaskSaveDelegate: AnyObject {
     
     func save(task: Task)
+    func update(old: Task, new: Task)
 }

@@ -21,6 +21,8 @@ class AddTaskController: UITableViewController {
     @IBOutlet weak var selectedPriorityLabel: UILabel!
     
     
+    var editedTask: Task?
+    
     private var remindDate: Date = Date()
     private var taskPriority = Priority.none
     
@@ -35,6 +37,10 @@ class AddTaskController: UITableViewController {
         super.viewDidLoad()
         taskNameTextField.delegate = self
         tableView.tableFooterView = UIView()
+        configureTitle()
+        if let task = editedTask {
+            fillFieldsFromEdited(task: task)
+        }
         setupGestureRecognizerForKeyboardDissmiss()
         setupSaveButton()
         updateRemindDateLabel()
@@ -155,6 +161,27 @@ class AddTaskController: UITableViewController {
         taskDescriptionTextView.endEditing(true)
     }
     
+    private func configureTitle(){
+        if editedTask == nil {
+            navigationItem.title = "Add Item"
+        } else {
+            navigationItem.title = "Edit Item"
+        }
+    }
+    
+    private func fillFieldsFromEdited(task: Task){
+        taskNameTextField.text = task.name
+        if task.isReminded {
+            remindDate = task.remindDate!
+            updateRemindDateLabel()
+        } else {
+            remindMeSwitch.isOn = false
+        }
+        taskPriority = task.priority
+        updatePriorityLabel()
+        taskDescriptionTextView.text = task.description
+    }
+    
     
     // MARK: - Actions
     
@@ -172,12 +199,17 @@ class AddTaskController: UITableViewController {
         let description = descriptionString.isEmpty ? nil : descriptionString
         let remindDate = remindMeSwitch.isOn ? self.remindDate : nil
         
-        let task = Task(id: "", name: name, description: description, remindDate: remindDate, priority: taskPriority)
+        let newTask = Task(id: "", name: name, description: description, remindDate: remindDate, priority: taskPriority)
         
         guard let addDelegate = addTaskSaveDelegate else {
             fatalError("Add delegate is nil")
         }
-        addDelegate.save(task: task)
+        if let oldTask = editedTask {
+            addDelegate.update(old: oldTask, new: newTask)
+        } else {
+            addDelegate.save(task: newTask)
+        }
+        
         navigationController?.popViewController(animated: true)
         
     }

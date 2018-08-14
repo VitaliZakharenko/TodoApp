@@ -27,6 +27,7 @@ class TodayTaskController: UIViewController {
         tableView.dataSource = self
         
         tableView.tableFooterView = UIView()
+        
     }
     
     //MARK: - Actions
@@ -105,7 +106,31 @@ extension TodayTaskController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        
+        let tasks: [Task] = {
+            switch indexPath.section {
+            case 0:
+                return TaskService.shared.getPendingTasks()
+            case 1:
+                return TaskService.shared.getCompletedTasks()
+            default:
+                fatalError("Unknown section \(indexPath.section)")
+            }
+        }()
+        
+        
+        let task = tasks[indexPath.row]
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
+        let editTaskController = storyboard.instantiateViewController(withIdentifier: "AddTaskControllerId") as! AddTaskController
+        editTaskController.addTaskSaveDelegate = self
+        editTaskController.editedTask = task
+        navigationController?.pushViewController(editTaskController, animated: true)
+        
     }
+    
+    
     
 }
 
@@ -150,7 +175,6 @@ extension TodayTaskController: UITableViewDataSource {
         cell.taskNameLabel.text = task.name
         cell.taskDescriptionLabel.text = task.description ?? "No description"
         cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : "No reminder"
-        
         return cell
     }
 }
@@ -162,6 +186,11 @@ extension TodayTaskController: AddTaskSaveDelegate {
     
     func save(task: Task) {
         TaskService.shared.getCategories()[0].add(task: task)
+        tableView.reloadData()
+    }
+    
+    func update(old: Task, new: Task) {
+        TaskService.shared.update(old: old, new: new)
         tableView.reloadData()
     }
     

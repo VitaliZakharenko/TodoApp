@@ -30,8 +30,6 @@ class Section: UIView {
         
         contentView.frame = bounds
         self.addSubview(contentView)
-        
-        titleLabel.text = "DEBUG TEXT"
     }
     
     
