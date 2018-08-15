@@ -36,6 +36,7 @@ class AddTaskController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         taskNameTextField.delegate = self
+        taskDescriptionTextView.delegate = self
         tableView.tableFooterView = UIView()
         configureTitle()
         if let task = editedTask {
@@ -79,7 +80,14 @@ class AddTaskController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 44.0
+    }
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 3 && indexPath.row == 0 {
+            return UITableViewAutomaticDimension
+        }
         return 44.0
     }
     
@@ -127,7 +135,7 @@ class AddTaskController: UITableViewController {
     
     private func selectTaskPriority(alert: UIAlertAction){
         guard let priorityString = alert.title,
-              priorityString != "Cancel" else {
+            priorityString != "Cancel" else {
             return
         }
         
@@ -225,6 +233,22 @@ extension AddTaskController: UITextFieldDelegate {
         taskNameTextField.resignFirstResponder()
         setupSaveButton()
         return true
+    }
+}
+
+//MARK: - UITextViewDelegate
+
+extension AddTaskController: UITextViewDelegate {
+    
+    func textViewDidChange(_ textView: UITextView) {
+        
+        let size = textView.bounds.size
+        let newSize = textView.sizeThatFits(CGSize(width: size.width, height: CGFloat.greatestFiniteMagnitude))
+        
+        if size.height != newSize.height {
+            tableView.beginUpdates()
+            tableView.endUpdates()
+        }
     }
 }
 

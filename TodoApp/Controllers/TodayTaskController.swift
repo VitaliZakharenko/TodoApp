@@ -25,18 +25,15 @@ class TodayTaskController: UIViewController {
         tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.TASK_CELL)
         tableView.delegate = self
         tableView.dataSource = self
-        
         tableView.tableFooterView = UIView()
+        navigationItem.leftBarButtonItem = editButtonItem
         
     }
     
-    //MARK: - Actions
     
-    @IBAction func editTaskList(_ sender: UIBarButtonItem) {
-        
-        tableView.isEditing = !tableView.isEditing
-        sender.title = tableView.isEditing ? "Done" : "Edit"
-        
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: true)
+        tableView.setEditing(editing, animated: true)
     }
     
     
@@ -48,6 +45,42 @@ class TodayTaskController: UIViewController {
                 destination.addTaskSaveDelegate = self
             }
         }
+    }
+    
+    
+    //MARK: - Private Methods
+    
+    private func getTaskFor(indexPath: IndexPath) -> Task {
+        
+        let tasks: [Task] = {
+            switch indexPath.section {
+            case 0:
+                return TaskService.shared.getPendingTasks()
+            case 1:
+                return TaskService.shared.getCompletedTasks()
+            default:
+                fatalError("Unknown section \(indexPath.section)")
+            }
+        }()
+        
+        
+        return tasks[indexPath.row]
+    }
+    
+    private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
+        let task = getTaskFor(indexPath: indexPath)
+        task.completed = Date()
+        TaskService.shared.getCategories()[0].remove(task: task)
+        TaskService.shared.getCategories()[1].add(task: task)
+        tableView.reloadData()
+    }
+    
+    private func taskUndone(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
+        let task = getTaskFor(indexPath: indexPath)
+        task.completed = nil
+        TaskService.shared.getCategories()[1].remove(task: task)
+        TaskService.shared.getCategories()[0].add(task: task)
+        tableView.reloadData()
     }
     
 
@@ -108,19 +141,7 @@ extension TodayTaskController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         
         
-        let tasks: [Task] = {
-            switch indexPath.section {
-            case 0:
-                return TaskService.shared.getPendingTasks()
-            case 1:
-                return TaskService.shared.getCompletedTasks()
-            default:
-                fatalError("Unknown section \(indexPath.section)")
-            }
-        }()
-        
-        
-        let task = tasks[indexPath.row]
+        let task = getTaskFor(indexPath: indexPath)
         
         let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
         let editTaskController = storyboard.instantiateViewController(withIdentifier: "AddTaskControllerId") as! AddTaskController
@@ -128,6 +149,22 @@ extension TodayTaskController: UITableViewDelegate {
         editTaskController.editedTask = task
         navigationController?.pushViewController(editTaskController, animated: true)
         
+    }
+    
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        
+        let doneOrUndoneAction: UITableViewRowAction = {
+            switch indexPath.section {
+            case 0:
+                return UITableViewRowAction(style: .default, title: "Done", handler: self.taskDone)
+            case 1:
+                return UITableViewRowAction(style: .default, title: "Undone", handler: self.taskUndone)
+            default:
+                fatalError("Unknown section \(indexPath.section)")
+            }
+        }()
+        return [doneOrUndoneAction]
     }
     
     
@@ -158,19 +195,7 @@ extension TodayTaskController: UITableViewDataSource {
         
         let cell = self.tableView.dequeueReusableCell(withIdentifier: Consts.Identifiers.TASK_CELL, for: indexPath) as! TaskCell
         
-        let tasks: [Task] = {
-            switch indexPath.section {
-            case 0:
-                return TaskService.shared.getPendingTasks()
-            case 1:
-                return TaskService.shared.getCompletedTasks()
-            default:
-                fatalError("Unknown section \(indexPath.section)")
-            }
-        }()
-        
-        
-        let task = tasks[indexPath.row]
+        let task = getTaskFor(indexPath: indexPath)
         
         cell.taskNameLabel.text = task.name
         cell.taskDescriptionLabel.text = task.description ?? "No description"
