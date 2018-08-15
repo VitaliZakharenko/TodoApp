@@ -83,6 +83,18 @@ class TodayTaskController: UIViewController {
         tableView.reloadData()
     }
     
+    private func deleteTask(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
+        let alertController = UIAlertController(title: "Delete", message: "Do you want to delete task?", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let delete = UIAlertAction(title: "Delete", style: .destructive, handler: { (alertAction) -> Void in
+            self.tableView(self.tableView, commit: .delete, forRowAt: indexPath)
+        })
+        
+        alertController.addAction(cancel)
+        alertController.addAction(delete)
+        present(alertController, animated: true, completion: nil)
+    }
+    
 
 }
 
@@ -140,31 +152,35 @@ extension TodayTaskController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        
-        let task = getTaskFor(indexPath: indexPath)
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
-        let editTaskController = storyboard.instantiateViewController(withIdentifier: "AddTaskControllerId") as! AddTaskController
-        editTaskController.addTaskSaveDelegate = self
-        editTaskController.editedTask = task
-        navigationController?.pushViewController(editTaskController, animated: true)
+        // edit only undone tasks
+        if indexPath.section == 0 {
+            let task = getTaskFor(indexPath: indexPath)
+            
+            let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
+            let editTaskController = storyboard.instantiateViewController(withIdentifier: "AddTaskControllerId") as! AddTaskController
+            editTaskController.addTaskSaveDelegate = self
+            editTaskController.editedTask = task
+            navigationController?.pushViewController(editTaskController, animated: true)
+        }
         
     }
     
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         
+        let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete", handler: self.deleteTask)
+        
         let doneOrUndoneAction: UITableViewRowAction = {
             switch indexPath.section {
             case 0:
-                return UITableViewRowAction(style: .default, title: "Done", handler: self.taskDone)
+                return UITableViewRowAction(style: .normal, title: "Done", handler: self.taskDone)
             case 1:
-                return UITableViewRowAction(style: .default, title: "Undone", handler: self.taskUndone)
+                return UITableViewRowAction(style: .normal, title: "Undone", handler: self.taskUndone)
             default:
                 fatalError("Unknown section \(indexPath.section)")
             }
         }()
-        return [doneOrUndoneAction]
+        return [deleteAction, doneOrUndoneAction]
     }
     
     

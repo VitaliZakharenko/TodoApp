@@ -246,8 +246,10 @@ extension AddTaskController: UITextViewDelegate {
         let newSize = textView.sizeThatFits(CGSize(width: size.width, height: CGFloat.greatestFiniteMagnitude))
         
         if size.height != newSize.height {
+            UIView.setAnimationsEnabled(false)
             tableView.beginUpdates()
             tableView.endUpdates()
+            UIView.setAnimationsEnabled(true)
         }
     }
 }
