@@ -28,7 +28,7 @@ class TaskService {
     }
     
     func add(task: Task) {
-        if tasks.index(where: { $0.name == task.name }) != nil {
+        if tasks.index(where: { $0.id == task.id }) != nil {
             return
         } else {
             tasks.append(task)
@@ -36,23 +36,23 @@ class TaskService {
     }
     
     func remove(task: Task){
-        if let index = tasks.index(where: { $0.name == task.name }){
+        if let index = tasks.index(where: { $0.id == task.id }){
             tasks.remove(at: index)
         }
     }
     
-    func update(old: Task, new: Task){
-        if let index = tasks.index(where: { $0.name == old.name }){
-            tasks[index] = new
+    func update(task: Task){
+        if let index = tasks.index(where: { $0.id == task.id }){
+            tasks[index] = task
         }
     }
     
     
     private func predefinedTestTasks() -> [Task] {
-        let t1 = Task(id: "", name: "First", description: nil, remindDate: Date())
-        let t2 = Task(id: "", name: "Second", description: nil, remindDate: Date())
-        let t3 = Task(id: "", name: "TestTask", description: nil, remindDate: Date())
-        let t4 = Task(id: "", name: "TestTask", description: nil, remindDate: Date())
+        let t1 = Task(id: UUID().uuidString, name: "First", description: nil, remindDate: Date())
+        let t2 = Task(id: UUID().uuidString, name: "Second", description: nil, remindDate: Date())
+        let t3 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date())
+        let t4 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date())
         
         return [t1, t2, t3, t4]
     }

@@ -208,14 +208,15 @@ class AddTaskController: UITableViewController {
         let description = descriptionString.isEmpty ? nil : descriptionString
         let remindDate = remindMeSwitch.isOn ? self.remindDate : nil
         
-        let newTask = Task(id: "", name: name, description: description, remindDate: remindDate, priority: taskPriority)
         
         guard let addDelegate = addTaskSaveDelegate else {
             fatalError("Add delegate is nil")
         }
         if let oldTask = editedTask {
-            addDelegate.update(old: oldTask, new: newTask)
+            let updatedTask = Task(id: oldTask.id, name: name, description: description, remindDate: remindDate, priority: taskPriority)
+            addDelegate.update(task: updatedTask)
         } else {
+            let newTask = Task(id: UUID().uuidString, name: name, description: description, remindDate: remindDate, priority: taskPriority)
             addDelegate.save(task: newTask)
         }
         

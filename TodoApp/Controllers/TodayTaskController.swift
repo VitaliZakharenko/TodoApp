@@ -71,7 +71,7 @@ class TodayTaskController: UIViewController {
         let task = taskFor(indexPath: indexPath)
         var newTask = Task(id: task.id, name: task.name, description: task.description, remindDate: task.remindDate, priority: task.priority)
         newTask.completed = Date()
-        TaskService.shared.update(old: task, new: newTask)
+        TaskService.shared.update(task: newTask)
         tableView.reloadData()
     }
     
@@ -79,7 +79,7 @@ class TodayTaskController: UIViewController {
         let task = taskFor(indexPath: indexPath)
         var newTask = Task(id: task.id, name: task.name, description: task.description, remindDate: task.remindDate, priority: task.priority)
         newTask.completed = nil
-        TaskService.shared.update(old: task, new: newTask)
+        TaskService.shared.update(task: newTask)
         tableView.reloadData()
     }
     
@@ -214,13 +214,14 @@ extension TodayTaskController: UITableViewDataSource {
 
 extension TodayTaskController: AddTaskSaveDelegate {
     
+    
     func save(task: Task) {
         TaskService.shared.add(task: task)
         tableView.reloadData()
     }
     
-    func update(old: Task, new: Task) {
-        TaskService.shared.update(old: old, new: new)
+    func update(task: Task) {
+        TaskService.shared.update(task: task)
         tableView.reloadData()
     }
 }
