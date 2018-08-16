@@ -30,6 +30,8 @@
 		F87F54F921109C4D00ED206E /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87F54F821109C4D00ED206E /* Task.swift */; };
 		F87F54FB21109DA300ED206E /* TaskCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87F54FA21109DA300ED206E /* TaskCategory.swift */; };
 		F87F54FD21109FBE00ED206E /* TaskService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87F54FC21109FBE00ED206E /* TaskService.swift */; };
+		F8DBB60E2125AFC2003DE156 /* InboxTaskController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DBB60D2125AFC2003DE156 /* InboxTaskController.swift */; };
+		F8DBB6102125C65E003DE156 /* Date+Comparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DBB60F2125C65E003DE156 /* Date+Comparison.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +81,8 @@
 		F87F54F821109C4D00ED206E /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		F87F54FA21109DA300ED206E /* TaskCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCategory.swift; sourceTree = "<group>"; };
 		F87F54FC21109FBE00ED206E /* TaskService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskService.swift; sourceTree = "<group>"; };
+		F8DBB60D2125AFC2003DE156 /* InboxTaskController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxTaskController.swift; sourceTree = "<group>"; };
+		F8DBB60F2125C65E003DE156 /* Date+Comparison.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Comparison.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +140,7 @@
 			children = (
 				F85B2FC82112346D0009177B /* Date+String.swift */,
 				F85DCB9B2121AB510001C547 /* UIColor+String.swift */,
+				F8DBB60F2125C65E003DE156 /* Date+Comparison.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -167,6 +172,7 @@
 				F87F54CC21108E2E00ED206E /* TodayTaskController.swift */,
 				F8367AB221199950008C4E6C /* AddTaskController.swift */,
 				F838DE2E211F21EF000F49CD /* SelectDateController.swift */,
+				F8DBB60D2125AFC2003DE156 /* InboxTaskController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -387,12 +393,14 @@
 				F830267F211C4361007638FD /* AddTaskSaveDelegate.swift in Sources */,
 				F85DCB9A212182AF0001C547 /* Section.swift in Sources */,
 				F87F54FB21109DA300ED206E /* TaskCategory.swift in Sources */,
+				F8DBB6102125C65E003DE156 /* Date+Comparison.swift in Sources */,
 				F87F54CD21108E2E00ED206E /* TodayTaskController.swift in Sources */,
 				F85B2FC92112346D0009177B /* Date+String.swift in Sources */,
 				F838DE31211F93BB000F49CD /* SelectDateDelegate.swift in Sources */,
 				F87F54F921109C4D00ED206E /* Task.swift in Sources */,
 				F85B2FC621122F7E0009177B /* Consts.swift in Sources */,
 				F87526282112286D0088E746 /* TaskCell.swift in Sources */,
+				F8DBB60E2125AFC2003DE156 /* InboxTaskController.swift in Sources */,
 				F8367AB321199950008C4E6C /* AddTaskController.swift in Sources */,
 				F87F54CB21108E2E00ED206E /* AppDelegate.swift in Sources */,
 				F838EFE4211D8FDB00D6225E /* Priority.swift in Sources */,

@@ -21,8 +21,8 @@ class TodayTaskController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let nib = UINib(nibName: Const.nibTaskCell, bundle: nil)
-        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.todayTasksCell)
+        let nib = UINib(nibName: Consts.Nibs.taskCell, bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.taskCell)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
@@ -198,13 +198,13 @@ extension TodayTaskController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = self.tableView.dequeueReusableCell(withIdentifier: Consts.Identifiers.todayTasksCell, for: indexPath) as! TaskCell
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: Consts.Identifiers.taskCell, for: indexPath) as! TaskCell
         
         let task = taskFor(indexPath: indexPath)
         
         cell.taskNameLabel.text = task.name
-        cell.taskDescriptionLabel.text = task.description ?? Const.noDescriptionText
-        cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Const.noReminderText
+        cell.taskDescriptionLabel.text = task.description ?? Consts.Text.noDescriptionText
+        cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Consts.Text.noReminderText
         return cell
     }
 }
@@ -228,9 +228,6 @@ extension TodayTaskController: AddTaskSaveDelegate {
 
 
 fileprivate struct Const {
-    static let nibTaskCell = "TaskCell"
-    static let noDescriptionText = "No description"
-    static let noReminderText = "No reminder"
     static let sectionTitlePendingTasks = " "
     static let sectionTitleCompletedTasks = "Completed"
     static let deleteTaskAlertMessage = "Do you want to delete task?"

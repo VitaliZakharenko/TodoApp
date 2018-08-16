@@ -27,6 +27,10 @@ class TaskService {
         return tasks.filter({ !$0.isCompleted })
     }
     
+    func allTasks() -> [Task] {
+        return tasks
+    }
+    
     func add(task: Task) {
         if tasks.index(where: { $0.id == task.id }) != nil {
             return
@@ -51,9 +55,13 @@ class TaskService {
     private func predefinedTestTasks() -> [Task] {
         let t1 = Task(id: UUID().uuidString, name: "First", description: nil, remindDate: Date())
         let t2 = Task(id: UUID().uuidString, name: "Second", description: nil, remindDate: Date())
-        let t3 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date())
-        let t4 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date())
+        let t3 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date(timeIntervalSinceNow: 86400))
+        let t4 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date(timeIntervalSinceNow: 86400 * 2))
+        var t5 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date())
+        t5.completed = Date()
+        let t6 = Task(id: UUID().uuidString, name: "TestTask6", description: nil, remindDate: Date())
+        let t7 = Task(id: UUID().uuidString, name: "TestTask7", description: nil, remindDate: Date())
         
-        return [t1, t2, t3, t4]
+        return [t1, t2, t3, t4, t5, t6, t7]
     }
 }
