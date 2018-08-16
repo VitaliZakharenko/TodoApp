@@ -12,53 +12,69 @@ class TaskService {
     
     static let shared = TaskService()
     
-    private var categories = [TaskCategory]()
+    private var dataStorage = UserDefaultsDataStorage()
+    
+    var pendingCategory: TaskCategory
+    var completedCategory: TaskCategory
     
     
     init(){
         
-        let pendingTasks = predefinedTestTasks()
-        let pendingCategory = TaskCategory(id: "", name: " ")
+        let allTasks = dataStorage.getAllTasks()
+        
+        let pendingTasks = allTasks.filter({!$0.isCompleted})
+        pendingCategory = TaskCategory(id: "", name: " ")
         pendingCategory.add(tasks: pendingTasks)
-        let completedTasks = [Task]()
-        let completedCategory = TaskCategory(id: "", name: "Completed")
+        let completedTasks = allTasks.filter({$0.isCompleted})
+        completedCategory = TaskCategory(id: "", name: "Completed")
         completedCategory.add(tasks: completedTasks)
         
-        categories.append(pendingCategory)
-        categories.append(completedCategory)
         
     }
     
-    func getCategories() -> [TaskCategory] {
-        return categories
+    func getCategoriesCount() -> Int {
+        return 2
     }
     
     func getCompletedTasks() -> [Task] {
-        return categories[1].getTasks()
+        return completedCategory.getTasks()
     }
     
     func getPendingTasks() -> [Task] {
-        return categories[0].getTasks()
+        return pendingCategory.getTasks()
     }
     
     func update(old: Task, new: Task){
-        for category in categories {
-            for task in category.getTasks(){
-                if task.name == old.name {
-                    category.remove(task: old)
-                    category.add(task: new)
-                }
+        updateInCategory(category: pendingCategory, old: old, new: new)
+        updateInCategory(category: completedCategory, old: old, new: new)
+        dataStorage.update(old: old, new: new)
+    }
+    
+    func save(task: Task){
+        if task.isCompleted {
+            completedCategory.add(task: task)
+        } else {
+            pendingCategory.add(task: task)
+        }
+        dataStorage.save(tasks: [task])
+    }
+    
+    func remove(task: Task){
+        if task.isCompleted {
+            completedCategory.remove(task: task)
+        } else {
+            pendingCategory.remove(task: task)
+        }
+        dataStorage.delete(tasks: [task])
+    }
+    
+    private func updateInCategory(category: TaskCategory, old: Task, new: Task){
+        for task in category.getTasks(){
+            if task.name == old.name {
+                category.remove(task: old)
+                category.add(task: new)
             }
         }
     }
     
-    
-    private func predefinedTestTasks() -> [Task] {
-        let t1 = Task(id: "", name: "First", description: nil, remindDate: Date())
-        let t2 = Task(id: "", name: "Second", description: nil, remindDate: Date())
-        let t3 = Task(id: "", name: "TestTask", description: nil, remindDate: Date())
-        let t4 = Task(id: "", name: "TestTask", description: nil, remindDate: Date())
-        
-        return [t1, t2, t3, t4]
-    }
 }

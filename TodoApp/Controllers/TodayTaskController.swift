@@ -70,16 +70,14 @@ class TodayTaskController: UIViewController {
     private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
         let task = getTaskFor(indexPath: indexPath)
         task.completed = Date()
-        TaskService.shared.getCategories()[0].remove(task: task)
-        TaskService.shared.getCategories()[1].add(task: task)
+        TaskService.shared.update(old: task, new: task)
         tableView.reloadData()
     }
     
     private func taskUndone(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
         let task = getTaskFor(indexPath: indexPath)
         task.completed = nil
-        TaskService.shared.getCategories()[1].remove(task: task)
-        TaskService.shared.getCategories()[0].add(task: task)
+        TaskService.shared.update(old: task, new: task)
         tableView.reloadData()
     }
     
@@ -105,9 +103,9 @@ extension TodayTaskController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return TaskService.shared.getCategories()[section].name
+            return TaskService.shared.pendingCategory.name
         case 1:
-            return TaskService.shared.getCategories()[section].name
+            return TaskService.shared.completedCategory.name
         default:
             fatalError("Unknown section \(section)")
         }
@@ -119,19 +117,17 @@ extension TodayTaskController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let (task, category): (Task, TaskCategory) = {
+            let task: Task = {
                 switch indexPath.section {
                 case 0:
-                    return (TaskService.shared.getPendingTasks()[indexPath.row],
-                            TaskService.shared.getCategories()[indexPath.section])
+                    return TaskService.shared.pendingCategory.getTasks()[indexPath.row]
                 case 1:
-                    return (TaskService.shared.getCompletedTasks()[indexPath.row],
-                            TaskService.shared.getCategories()[indexPath.section])
+                    return TaskService.shared.completedCategory.getTasks()[indexPath.row]
                 default:
                     fatalError("Unknown section \(indexPath.section)")
                 }
             }()
-            category.remove(task: task)
+            TaskService.shared.remove(task: task)
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
@@ -226,7 +222,7 @@ extension TodayTaskController: UITableViewDataSource {
 extension TodayTaskController: AddTaskSaveDelegate {
     
     func save(task: Task) {
-        TaskService.shared.getCategories()[0].add(task: task)
+        TaskService.shared.save(task: task)
         tableView.reloadData()
     }
     

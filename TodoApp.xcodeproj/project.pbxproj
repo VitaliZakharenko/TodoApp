@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		F830267F211C4361007638FD /* AddTaskSaveDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F830267E211C4361007638FD /* AddTaskSaveDelegate.swift */; };
+		F8346598212455B6007AEFC5 /* DataStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8346597212455B6007AEFC5 /* DataStorage.swift */; };
+		F834659B2124575D007AEFC5 /* UserDefaultsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F834659A2124575D007AEFC5 /* UserDefaultsStorage.swift */; };
 		F8367AB12117277D008C4E6C /* TaskCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8367AB02117277D008C4E6C /* TaskCell.xib */; };
 		F8367AB321199950008C4E6C /* AddTaskController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8367AB221199950008C4E6C /* AddTaskController.swift */; };
 		F838DE2D211F1CEB000F49CD /* SelectDate.xib in Resources */ = {isa = PBXBuildFile; fileRef = F838DE2C211F1CEB000F49CD /* SelectDate.xib */; };
@@ -51,6 +53,8 @@
 
 /* Begin PBXFileReference section */
 		F830267E211C4361007638FD /* AddTaskSaveDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskSaveDelegate.swift; sourceTree = "<group>"; };
+		F8346597212455B6007AEFC5 /* DataStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStorage.swift; sourceTree = "<group>"; };
+		F834659A2124575D007AEFC5 /* UserDefaultsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsStorage.swift; sourceTree = "<group>"; };
 		F8367AB02117277D008C4E6C /* TaskCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TaskCell.xib; sourceTree = "<group>"; };
 		F8367AB221199950008C4E6C /* AddTaskController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskController.swift; sourceTree = "<group>"; };
 		F838DE2C211F1CEB000F49CD /* SelectDate.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectDate.xib; sourceTree = "<group>"; };
@@ -111,8 +115,17 @@
 			children = (
 				F830267E211C4361007638FD /* AddTaskSaveDelegate.swift */,
 				F838DE30211F93BB000F49CD /* SelectDateDelegate.swift */,
+				F8346597212455B6007AEFC5 /* DataStorage.swift */,
 			);
 			path = Protocols;
+			sourceTree = "<group>";
+		};
+		F83465992124573A007AEFC5 /* DataStorage */ = {
+			isa = PBXGroup;
+			children = (
+				F834659A2124575D007AEFC5 /* UserDefaultsStorage.swift */,
+			);
+			path = DataStorage;
 			sourceTree = "<group>";
 		};
 		F838EFE2211D8FB900D6225E /* Enums */ = {
@@ -143,6 +156,7 @@
 		F87526232112280A0088E746 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				F83465992124573A007AEFC5 /* DataStorage */,
 				F87F54F821109C4D00ED206E /* Task.swift */,
 				F87F54FA21109DA300ED206E /* TaskCategory.swift */,
 				F87F54FC21109FBE00ED206E /* TaskService.swift */,
@@ -393,8 +407,10 @@
 				F87F54F921109C4D00ED206E /* Task.swift in Sources */,
 				F85B2FC621122F7E0009177B /* Consts.swift in Sources */,
 				F87526282112286D0088E746 /* TaskCell.swift in Sources */,
+				F8346598212455B6007AEFC5 /* DataStorage.swift in Sources */,
 				F8367AB321199950008C4E6C /* AddTaskController.swift in Sources */,
 				F87F54CB21108E2E00ED206E /* AppDelegate.swift in Sources */,
+				F834659B2124575D007AEFC5 /* UserDefaultsStorage.swift in Sources */,
 				F838EFE4211D8FDB00D6225E /* Priority.swift in Sources */,
 				F85DCB9C2121AB510001C547 /* UIColor+String.swift in Sources */,
 			);
