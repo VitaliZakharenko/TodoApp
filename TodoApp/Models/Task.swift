@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Task {
+struct Task {
     
     // not used yet, empty string
     let id: String
@@ -39,11 +39,4 @@ class Task {
         self.priority = priority
     }
     
-    func setCompleted(date: Date){
-        self.completed = date
-    }
-    
-    func setActive(){
-        self.completed = nil
-    }
 }

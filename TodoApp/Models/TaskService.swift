@@ -12,43 +12,38 @@ class TaskService {
     
     static let shared = TaskService()
     
-    private var categories = [TaskCategory]()
+    private var tasks = [Task]()
     
     
     init(){
-        
-        let pendingTasks = predefinedTestTasks()
-        let pendingCategory = TaskCategory(id: "", name: " ")
-        pendingCategory.add(tasks: pendingTasks)
-        let completedTasks = [Task]()
-        let completedCategory = TaskCategory(id: "", name: "Completed")
-        completedCategory.add(tasks: completedTasks)
-        
-        categories.append(pendingCategory)
-        categories.append(completedCategory)
-        
+        tasks.append(contentsOf: predefinedTestTasks())
     }
     
-    func getCategories() -> [TaskCategory] {
-        return categories
+    func completedTasks() -> [Task] {
+        return tasks.filter({ $0.isCompleted })
     }
     
-    func getCompletedTasks() -> [Task] {
-        return categories[1].getTasks()
+    func pendingTasks() -> [Task] {
+        return tasks.filter({ !$0.isCompleted })
     }
     
-    func getPendingTasks() -> [Task] {
-        return categories[0].getTasks()
+    func add(task: Task) {
+        if tasks.index(where: { $0.name == task.name }) != nil {
+            return
+        } else {
+            tasks.append(task)
+        }
+    }
+    
+    func remove(task: Task){
+        if let index = tasks.index(where: { $0.name == task.name }){
+            tasks.remove(at: index)
+        }
     }
     
     func update(old: Task, new: Task){
-        for category in categories {
-            for task in category.getTasks(){
-                if task.name == old.name {
-                    category.remove(task: old)
-                    category.add(task: new)
-                }
-            }
+        if let index = tasks.index(where: { $0.name == old.name }){
+            tasks[index] = new
         }
     }
     

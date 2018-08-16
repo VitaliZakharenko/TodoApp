@@ -10,7 +10,20 @@ import Foundation
 
 struct Consts {
     struct Identifiers {
-        static let TASK_CELL = "TaskCell"
-        static let SHOW_ADD_TASK_SEGUE = "ShowAddTaskSegue"
+        static let todayTasksCell = "TaskCell"
+        static let showAddTaskSegue = "ShowAddTaskSegue"
+        static let addTaskController = "AddTaskControllerId"
+    }
+    
+    struct Text {
+        static let done = "Done"
+        static let undone = "Undone"
+        static let cancel = "Cancel"
+        static let delete = "Delete"
+        static let back = "Back"
+    }
+    
+    struct Storyboards {
+        static let main = "Main"
     }
 }

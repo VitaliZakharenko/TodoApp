@@ -28,9 +28,9 @@ class AddTaskController: UITableViewController {
     
     
     let remindDateFormatter: DateFormatter = {
-        let fm = DateFormatter()
-        fm.dateFormat = "EEEE, d MMM yyyy, HH:mm"
-        return fm
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = Const.dateFormatString
+        return dateFormatter
     }()
     
     override func viewDidLoad() {
@@ -40,7 +40,7 @@ class AddTaskController: UITableViewController {
         tableView.tableFooterView = UIView()
         configureTitle()
         if let task = editedTask {
-            fillFieldsFromEdited(task: task)
+            fillFieldsFrom(task)
         }
         setupGestureRecognizerForKeyboardDissmiss()
         setupSaveButton()
@@ -113,13 +113,13 @@ class AddTaskController: UITableViewController {
     }
     
     private func selectRemindDateRowClicked(){
-        let selectDateController = SelectDateController(nibName: "SelectDate", bundle: nil)
+        let selectDateController = SelectDateController(nibName: Const.nibSelectDate, bundle: nil)
         selectDateController.selectDateDelegate = self
         navigationController?.pushViewController(selectDateController, animated: true)
     }
     
     private func showSelectPriorityController(){
-        let alertController = UIAlertController(title: "Select Priority", message: nil, preferredStyle: .actionSheet)
+        let alertController = UIAlertController(title: Const.selectPriorityTitle, message: nil, preferredStyle: .actionSheet)
         
         let priorities: [Priority] = [.none, .low, .medium, .high]
         for priority in priorities {
@@ -127,7 +127,7 @@ class AddTaskController: UITableViewController {
             alertController.addAction(action)
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: selectTaskPriority)
+        let cancelAction = UIAlertAction(title: Consts.Text.cancel, style: .cancel, handler: selectTaskPriority)
         alertController.addAction(cancelAction)
         present(alertController, animated: true, completion: nil)
         
@@ -135,7 +135,7 @@ class AddTaskController: UITableViewController {
     
     private func selectTaskPriority(alert: UIAlertAction){
         guard let priorityString = alert.title,
-            priorityString != "Cancel" else {
+            priorityString != Consts.Text.cancel else {
             return
         }
         
@@ -167,27 +167,28 @@ class AddTaskController: UITableViewController {
     
     @objc private func dismissTextViewKeyboard(_ sender: UITapGestureRecognizer) {
         taskDescriptionTextView.endEditing(true)
+        let _ = textFieldShouldReturn(taskNameTextField)
     }
     
     private func configureTitle(){
         if editedTask == nil {
-            navigationItem.title = "Add Item"
+            navigationItem.title = Const.navbarTitileAdd
         } else {
-            navigationItem.title = "Edit Item"
+            navigationItem.title = Const.navbarTitleEdit
         }
     }
     
-    private func fillFieldsFromEdited(task: Task){
-        taskNameTextField.text = task.name
-        if task.isReminded {
-            remindDate = task.remindDate!
+    private func fillFieldsFrom(_ editedTask: Task){
+        taskNameTextField.text = editedTask.name
+        if editedTask.isReminded {
+            remindDate = editedTask.remindDate!
             updateRemindDateLabel()
         } else {
             remindMeSwitch.isOn = false
         }
-        taskPriority = task.priority
+        taskPriority = editedTask.priority
         updatePriorityLabel()
-        taskDescriptionTextView.text = task.description
+        taskDescriptionTextView.text = editedTask.description
     }
     
     
@@ -274,3 +275,10 @@ extension AddTaskController: SelectDateDelegate {
     
 }
 
+fileprivate struct Const {
+    static let navbarTitileAdd = "Add Item"
+    static let navbarTitleEdit = "Edit Item"
+    static let selectPriorityTitle = "Select Priority"
+    static let nibSelectDate = "SelectDate"
+    static let dateFormatString = "EEEE, d MMM yyyy, HH:mm"
+}

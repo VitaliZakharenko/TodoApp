@@ -30,8 +30,9 @@ class SelectDateController: UIViewController {
         
         setupNavBar()
         let minDate = selectDateDelegate.minimumDate()
-        let fm = selectDateDelegate.dateFormatter()
-        selectedDateLabel.text = fm.string(from: minDate)
+        selectedDate = minDate
+        let formatter = selectDateDelegate.dateFormatter()
+        selectedDateLabel.text = formatter.string(from: minDate)
         datePicker.minimumDate = minDate
         
     }
@@ -39,9 +40,9 @@ class SelectDateController: UIViewController {
     //MARK: - Private Methods
     
     private func setupNavBar(){
-        navigationItem.title = "Choose Date"
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonClicked(_:)))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneButtonClicked(_:)))
+        navigationItem.title = Const.navbarTitle
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: Consts.Text.back, style: .plain, target: self, action: #selector(backButtonClicked(_:)))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: Consts.Text.done, style: .plain, target: self, action: #selector(doneButtonClicked(_:)))
     }
     
     @objc private func backButtonClicked(_ sender: UIBarButtonItem){
@@ -65,6 +66,8 @@ class SelectDateController: UIViewController {
         selectedDateLabel.text = fm.string(from: sender.date)
     }
     
-    
+}
 
+fileprivate struct Const {
+    static let navbarTitle = "Choose Date"
 }

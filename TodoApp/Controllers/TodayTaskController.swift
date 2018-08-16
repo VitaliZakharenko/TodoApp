@@ -21,8 +21,8 @@ class TodayTaskController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let nib = UINib(nibName: "TaskCell", bundle: nil)
-        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.TASK_CELL)
+        let nib = UINib(nibName: Const.nibTaskCell, bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.todayTasksCell)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
@@ -40,7 +40,7 @@ class TodayTaskController: UIViewController {
     //MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == Consts.Identifiers.SHOW_ADD_TASK_SEGUE {
+        if segue.identifier == Consts.Identifiers.showAddTaskSegue {
             if let destination = segue.destination as? AddTaskController {
                 destination.addTaskSaveDelegate = self
             }
@@ -50,14 +50,14 @@ class TodayTaskController: UIViewController {
     
     //MARK: - Private Methods
     
-    private func getTaskFor(indexPath: IndexPath) -> Task {
+    private func taskFor(indexPath: IndexPath) -> Task {
         
         let tasks: [Task] = {
             switch indexPath.section {
             case 0:
-                return TaskService.shared.getPendingTasks()
+                return TaskService.shared.pendingTasks()
             case 1:
-                return TaskService.shared.getCompletedTasks()
+                return TaskService.shared.completedTasks()
             default:
                 fatalError("Unknown section \(indexPath.section)")
             }
@@ -68,25 +68,25 @@ class TodayTaskController: UIViewController {
     }
     
     private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
-        let task = getTaskFor(indexPath: indexPath)
-        task.completed = Date()
-        TaskService.shared.getCategories()[0].remove(task: task)
-        TaskService.shared.getCategories()[1].add(task: task)
+        let task = taskFor(indexPath: indexPath)
+        var newTask = Task(id: task.id, name: task.name, description: task.description, remindDate: task.remindDate, priority: task.priority)
+        newTask.completed = Date()
+        TaskService.shared.update(old: task, new: newTask)
         tableView.reloadData()
     }
     
     private func taskUndone(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
-        let task = getTaskFor(indexPath: indexPath)
-        task.completed = nil
-        TaskService.shared.getCategories()[1].remove(task: task)
-        TaskService.shared.getCategories()[0].add(task: task)
+        let task = taskFor(indexPath: indexPath)
+        var newTask = Task(id: task.id, name: task.name, description: task.description, remindDate: task.remindDate, priority: task.priority)
+        newTask.completed = nil
+        TaskService.shared.update(old: task, new: newTask)
         tableView.reloadData()
     }
     
     private func deleteTask(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
-        let alertController = UIAlertController(title: "Delete", message: "Do you want to delete task?", preferredStyle: .alert)
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let delete = UIAlertAction(title: "Delete", style: .destructive, handler: { (alertAction) -> Void in
+        let alertController = UIAlertController(title: Consts.Text.delete, message: Const.deleteTaskAlertMessage, preferredStyle: .alert)
+        let cancel = UIAlertAction(title: Consts.Text.cancel, style: .cancel, handler: nil)
+        let delete = UIAlertAction(title: Consts.Text.delete, style: .destructive, handler: { (alertAction) -> Void in
             self.tableView(self.tableView, commit: .delete, forRowAt: indexPath)
         })
         
@@ -105,9 +105,9 @@ extension TodayTaskController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return TaskService.shared.getCategories()[section].name
+            return Const.sectionTitlePendingTasks
         case 1:
-            return TaskService.shared.getCategories()[section].name
+            return Const.sectionTitleCompletedTasks
         default:
             fatalError("Unknown section \(section)")
         }
@@ -119,19 +119,8 @@ extension TodayTaskController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let (task, category): (Task, TaskCategory) = {
-                switch indexPath.section {
-                case 0:
-                    return (TaskService.shared.getPendingTasks()[indexPath.row],
-                            TaskService.shared.getCategories()[indexPath.section])
-                case 1:
-                    return (TaskService.shared.getCompletedTasks()[indexPath.row],
-                            TaskService.shared.getCategories()[indexPath.section])
-                default:
-                    fatalError("Unknown section \(indexPath.section)")
-                }
-            }()
-            category.remove(task: task)
+            let task = taskFor(indexPath: indexPath)
+            TaskService.shared.remove(task: task)
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
@@ -154,10 +143,10 @@ extension TodayTaskController: UITableViewDelegate {
         
         // edit only undone tasks
         if indexPath.section == 0 {
-            let task = getTaskFor(indexPath: indexPath)
+            let task = taskFor(indexPath: indexPath)
             
-            let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
-            let editTaskController = storyboard.instantiateViewController(withIdentifier: "AddTaskControllerId") as! AddTaskController
+            let storyboard = UIStoryboard(name: Consts.Storyboards.main, bundle: Bundle.main)
+            let editTaskController = storyboard.instantiateViewController(withIdentifier: Consts.Identifiers.addTaskController) as! AddTaskController
             editTaskController.addTaskSaveDelegate = self
             editTaskController.editedTask = task
             navigationController?.pushViewController(editTaskController, animated: true)
@@ -168,14 +157,14 @@ extension TodayTaskController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         
-        let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete", handler: self.deleteTask)
+        let deleteAction = UITableViewRowAction(style: .destructive, title: Consts.Text.delete, handler: self.deleteTask)
         
         let doneOrUndoneAction: UITableViewRowAction = {
             switch indexPath.section {
             case 0:
-                return UITableViewRowAction(style: .normal, title: "Done", handler: self.taskDone)
+                return UITableViewRowAction(style: .normal, title: Consts.Text.done, handler: self.taskDone)
             case 1:
-                return UITableViewRowAction(style: .normal, title: "Undone", handler: self.taskUndone)
+                return UITableViewRowAction(style: .normal, title: Consts.Text.undone, handler: self.taskUndone)
             default:
                 fatalError("Unknown section \(indexPath.section)")
             }
@@ -199,9 +188,9 @@ extension TodayTaskController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return TaskService.shared.getPendingTasks().count
+            return TaskService.shared.pendingTasks().count
         case 1:
-            return TaskService.shared.getCompletedTasks().count
+            return TaskService.shared.completedTasks().count
         default:
             fatalError("Unknown section \(section)")
         }
@@ -209,13 +198,13 @@ extension TodayTaskController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = self.tableView.dequeueReusableCell(withIdentifier: Consts.Identifiers.TASK_CELL, for: indexPath) as! TaskCell
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: Consts.Identifiers.todayTasksCell, for: indexPath) as! TaskCell
         
-        let task = getTaskFor(indexPath: indexPath)
+        let task = taskFor(indexPath: indexPath)
         
         cell.taskNameLabel.text = task.name
-        cell.taskDescriptionLabel.text = task.description ?? "No description"
-        cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : "No reminder"
+        cell.taskDescriptionLabel.text = task.description ?? Const.noDescriptionText
+        cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Const.noReminderText
         return cell
     }
 }
@@ -226,7 +215,7 @@ extension TodayTaskController: UITableViewDataSource {
 extension TodayTaskController: AddTaskSaveDelegate {
     
     func save(task: Task) {
-        TaskService.shared.getCategories()[0].add(task: task)
+        TaskService.shared.add(task: task)
         tableView.reloadData()
     }
     
@@ -234,7 +223,15 @@ extension TodayTaskController: AddTaskSaveDelegate {
         TaskService.shared.update(old: old, new: new)
         tableView.reloadData()
     }
-    
-    
+}
+
+
+fileprivate struct Const {
+    static let nibTaskCell = "TaskCell"
+    static let noDescriptionText = "No description"
+    static let noReminderText = "No reminder"
+    static let sectionTitlePendingTasks = " "
+    static let sectionTitleCompletedTasks = "Completed"
+    static let deleteTaskAlertMessage = "Do you want to delete task?"
     
 }
