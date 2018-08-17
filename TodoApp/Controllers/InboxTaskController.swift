@@ -10,6 +10,7 @@ import UIKit
 
 fileprivate struct Const {
     static let sectionDateFormat = "dd.MM.yyyy"
+    static let noReminderSectionTitle = "No reminder"
 }
 
 class InboxTaskController: UIViewController {
@@ -20,7 +21,11 @@ class InboxTaskController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     
-    private var groupedTasks: [[Task]]!
+    
+    private var sortOrder: SortOrder = .ascending
+    
+    private var groupedTasksWithReminder: [[Task]]!
+    private var tasksWithoutReminder: [Task] = [Task]()
     private var sectionDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = Const.sectionDateFormat
@@ -33,17 +38,9 @@ class InboxTaskController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = editButtonItem
-        let allTasks = TaskService.shared.allTasks()
-        groupedTasks = groupByRemindDay(tasks: allTasks)
-        let nib = UINib(nibName: Consts.Nibs.taskCell, bundle: nil)
-        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.taskCell)
-        tableView.tableFooterView = UIView()
-        tableView.dataSource = self
-        tableView.delegate = self
-        
-        
-        
-        
+        loadData()
+        configureTableView()
+        sortTasks(by: sortOrder)
     }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -52,16 +49,43 @@ class InboxTaskController: UIViewController {
     }
     
     
+    //MARK: - Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == Consts.Identifiers.showAddTaskSegue {
+            if let destination = segue.destination as? AddTaskController {
+                destination.addTaskSaveDelegate = self
+            }
+        }
+    }
+    
+    
     //MARK: - Private Methods
+    
+    
+    private func configureTableView(){
+        let nib = UINib(nibName: Consts.Nibs.taskCell, bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.taskCell)
+        tableView.tableFooterView = UIView()
+        tableView.dataSource = self
+        tableView.delegate = self
+    }
+    
+    private func loadData(){
+        let withReminder = TaskService.shared.tasksBy(predicate: { $0.isReminded })
+        tasksWithoutReminder = TaskService.shared.tasksBy(predicate: { !$0.isReminded })
+        groupedTasksWithReminder = groupByRemindDay(tasks: withReminder)
+    }
+    
+    private func reloadData(){
+        loadData()
+        sortTasks(by: sortOrder)
+    }
     
     private func groupByRemindDay(tasks: [Task]) -> [[Task]] {
         var groupedByDateWithDayGranularity = [Date: [Task]]()
         
-        let withReminder = tasks.filter({ $0.isReminded })
-        let noReminder = tasks.filter( { !$0.isReminded })
-        
-        
-        for task in withReminder {
+        for task in tasks {
             if let index = groupedByDateWithDayGranularity.keys.index(where: { $0.compareByDayGranularity(other: task.remindDate!) }){
                 let key = groupedByDateWithDayGranularity.keys[index]
                 groupedByDateWithDayGranularity[key]!.append(task)
@@ -69,15 +93,76 @@ class InboxTaskController: UIViewController {
                 groupedByDateWithDayGranularity[task.remindDate!] = [task]
             }
         }
-        
-        // without reminder not included
         return Array(groupedByDateWithDayGranularity.values)
     }
     
     private func taskFor(indexPath: IndexPath) -> Task {
-        return groupedTasks[indexPath.section][indexPath.row]
+        if indexPath.section == (numberOfSections(in: tableView) - 1) {
+            return tasksWithoutReminder[indexPath.row]
+        } else {
+            return groupedTasksWithReminder[indexPath.section][indexPath.row]
+        }
     }
-
+    
+    private func sortTasks(by sortOrder: SortOrder) {
+        switch sortOrder {
+        case .ascending:
+            groupedTasksWithReminder.sort(by: { $0[0].remindDate! < $1[0].remindDate! })
+            for var group in groupedTasksWithReminder {
+                group.sort(by: { $0.remindDate! < $1.remindDate! })
+            }
+        case .descending:
+            groupedTasksWithReminder.sort(by: { $0[0].remindDate! >= $1[0].remindDate! })
+            for var group in groupedTasksWithReminder {
+                group.sort(by: { $0.remindDate! >= $1.remindDate! })
+            }
+        }
+        tableView.reloadData()
+    }
+    
+    private func changeSortOrder(){
+        switch sortOrder {
+        case .ascending: sortOrder = .descending
+        case .descending: sortOrder = .ascending
+        }
+    }
+    
+    private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
+        let task = taskFor(indexPath: indexPath)
+        var newTask = Task(id: task.id, name: task.name, description: task.description, remindDate: task.remindDate, priority: task.priority)
+        newTask.completed = Date()
+        TaskService.shared.update(task: newTask)
+        reloadData()
+    }
+    
+    private func taskUndone(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
+        let task = taskFor(indexPath: indexPath)
+        var newTask = Task(id: task.id, name: task.name, description: task.description, remindDate: task.remindDate, priority: task.priority)
+        newTask.completed = nil
+        TaskService.shared.update(task: newTask)
+        reloadData()
+    }
+    
+    private func deleteTask(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
+        let alertController = UIAlertController(title: Consts.Text.delete, message: Consts.Text.deleteTaskAlertMessage, preferredStyle: .alert)
+        let cancel = UIAlertAction(title: Consts.Text.cancel, style: .cancel, handler: nil)
+        let delete = UIAlertAction(title: Consts.Text.delete, style: .destructive, handler: { (alertAction) -> Void in
+            self.tableView(self.tableView, commit: .delete, forRowAt: indexPath)
+        })
+        alertController.addAction(cancel)
+        alertController.addAction(delete)
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    
+    //MARK: - Actions
+    
+    
+    @IBAction func sortOrderChanged(_ sender: UIBarButtonItem) {
+        changeSortOrder()
+        sortTasks(by: sortOrder)
+    }
+    
 
 }
 
@@ -85,10 +170,53 @@ class InboxTaskController: UIViewController {
 
 extension InboxTaskController: UITableViewDelegate {
     
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let task = taskFor(indexPath: indexPath)
+            TaskService.shared.remove(task: task)
+            reloadData()
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let task = taskFor(indexPath: indexPath)
+            
+        let storyboard = UIStoryboard(name: Consts.Storyboards.main, bundle: Bundle.main)
+        let editTaskController = storyboard.instantiateViewController(withIdentifier: Consts.Identifiers.addTaskController) as! AddTaskController
+        editTaskController.addTaskSaveDelegate = self
+        editTaskController.editedTask = task
+        navigationController?.pushViewController(editTaskController, animated: true)
+        
+    }
+    
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        
+        let deleteAction = UITableViewRowAction(style: .destructive, title: Consts.Text.delete, handler: self.deleteTask)
+        
+        let task = taskFor(indexPath: indexPath)
+        let doneOrUndoneAction: UITableViewRowAction = {
+            switch task.isCompleted {
+            case false:
+                return UITableViewRowAction(style: .normal, title: Consts.Text.done, handler: self.taskDone)
+            case true:
+                return UITableViewRowAction(style: .normal, title: Consts.Text.undone, handler: self.taskUndone)
+            }
+        }()
+        return [deleteAction, doneOrUndoneAction]
+    }
+
+    
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let sectionDate = groupedTasks[section][0].remindDate!
-        return sectionDateFormatter.string(from: sectionDate)
+        if section == (numberOfSections(in: tableView) - 1) {
+            return Const.noReminderSectionTitle
+        } else {
+            let sectionDate = groupedTasksWithReminder[section][0].remindDate!
+            return sectionDateFormatter.string(from: sectionDate)
+        }
     }
     
     
@@ -113,11 +241,15 @@ extension InboxTaskController: UITableViewDelegate {
 extension InboxTaskController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return groupedTasks.count
+        return groupedTasksWithReminder.count + 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return groupedTasks[section].count
+        if section == (numberOfSections(in: tableView) - 1){
+            return tasksWithoutReminder.count
+        } else {
+            return groupedTasksWithReminder[section].count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -131,4 +263,20 @@ extension InboxTaskController: UITableViewDataSource {
         cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Consts.Text.noReminderText
         return cell
     }
+}
+
+//MARK: - AddTaskSaveDelegate
+
+extension InboxTaskController: AddTaskSaveDelegate {
+    func save(task: Task) {
+        TaskService.shared.add(task: task)
+        reloadData()
+    }
+    
+    func update(task: Task) {
+        TaskService.shared.update(task: task)
+        reloadData()
+    }
+    
+    
 }

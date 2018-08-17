@@ -27,6 +27,10 @@ class TaskService {
         return tasks.filter({ !$0.isCompleted })
     }
     
+    func tasksBy(predicate: ((Task) -> Bool)) -> [Task] {
+        return tasks.filter(predicate)
+    }
+    
     func allTasks() -> [Task] {
         return tasks
     }
@@ -54,7 +58,7 @@ class TaskService {
     
     private func predefinedTestTasks() -> [Task] {
         let t1 = Task(id: UUID().uuidString, name: "First", description: nil, remindDate: Date())
-        let t2 = Task(id: UUID().uuidString, name: "Second", description: nil, remindDate: Date())
+        let t2 = Task(id: UUID().uuidString, name: "Second", description: nil, remindDate: nil)
         let t3 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date(timeIntervalSinceNow: 86400))
         let t4 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date(timeIntervalSinceNow: 86400 * 2))
         var t5 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date())

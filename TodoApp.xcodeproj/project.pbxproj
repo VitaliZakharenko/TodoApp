@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F830267F211C4361007638FD /* AddTaskSaveDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F830267E211C4361007638FD /* AddTaskSaveDelegate.swift */; };
+		F8362DE52126B9C0009699DA /* SortOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8362DE42126B9C0009699DA /* SortOrder.swift */; };
 		F8367AB12117277D008C4E6C /* TaskCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8367AB02117277D008C4E6C /* TaskCell.xib */; };
 		F8367AB321199950008C4E6C /* AddTaskController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8367AB221199950008C4E6C /* AddTaskController.swift */; };
 		F838DE2D211F1CEB000F49CD /* SelectDate.xib in Resources */ = {isa = PBXBuildFile; fileRef = F838DE2C211F1CEB000F49CD /* SelectDate.xib */; };
@@ -53,6 +54,7 @@
 
 /* Begin PBXFileReference section */
 		F830267E211C4361007638FD /* AddTaskSaveDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskSaveDelegate.swift; sourceTree = "<group>"; };
+		F8362DE42126B9C0009699DA /* SortOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOrder.swift; sourceTree = "<group>"; };
 		F8367AB02117277D008C4E6C /* TaskCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TaskCell.xib; sourceTree = "<group>"; };
 		F8367AB221199950008C4E6C /* AddTaskController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskController.swift; sourceTree = "<group>"; };
 		F838DE2C211F1CEB000F49CD /* SelectDate.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectDate.xib; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				F838EFE3211D8FDB00D6225E /* Priority.swift */,
+				F8362DE42126B9C0009699DA /* SortOrder.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -392,6 +395,7 @@
 				F838DE2F211F21EF000F49CD /* SelectDateController.swift in Sources */,
 				F830267F211C4361007638FD /* AddTaskSaveDelegate.swift in Sources */,
 				F85DCB9A212182AF0001C547 /* Section.swift in Sources */,
+				F8362DE52126B9C0009699DA /* SortOrder.swift in Sources */,
 				F87F54FB21109DA300ED206E /* TaskCategory.swift in Sources */,
 				F8DBB6102125C65E003DE156 /* Date+Comparison.swift in Sources */,
 				F87F54CD21108E2E00ED206E /* TodayTaskController.swift in Sources */,

@@ -24,6 +24,8 @@ struct Consts {
         
         static let noDescriptionText = "No description"
         static let noReminderText = "No reminder"
+        
+        static let deleteTaskAlertMessage = "Do you want to delete task?"
     }
     
     struct Nibs {

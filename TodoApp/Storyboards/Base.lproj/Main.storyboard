@@ -242,7 +242,6 @@
         <!--Today-->
         <scene sceneID="LbM-pe-BA9">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="8VH-ff-2tn" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ZKr-pz-mle" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Today" image="TodayBarItem" selectedImage="TodayBarItemActive" id="RiZ-ZE-7ZK"/>
                     <toolbarItems/>
@@ -255,6 +254,7 @@
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="wQg-D1-zhO"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8VH-ff-2tn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-737" y="-207"/>
         </scene>
@@ -305,8 +305,16 @@
                     </view>
                     <navigationItem key="navigationItem" title="Inbox" id="h7q-D9-ObP">
                         <rightBarButtonItems>
-                            <barButtonItem title="Item" image="right_add_detail" id="o0n-A8-1Ve"/>
-                            <barButtonItem title="Item" image="right_sort" id="Rnq-Zr-OxJ"/>
+                            <barButtonItem title="Item" image="right_add_detail" id="o0n-A8-1Ve">
+                                <connections>
+                                    <segue destination="wiQ-GD-fJh" kind="show" identifier="ShowAddTaskSegue" id="mRp-4b-IWF"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Item" image="right_sort" id="Rnq-Zr-OxJ">
+                                <connections>
+                                    <action selector="sortOrderChanged:" destination="hMb-oT-CTp" id="iMK-mT-fzf"/>
+                                </connections>
+                            </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
@@ -346,4 +354,7 @@
         <image name="right_add_detail" width="24" height="24"/>
         <image name="right_sort" width="24" height="24"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="mRp-4b-IWF"/>
+    </inferredMetricsTieBreakers>
 </document>

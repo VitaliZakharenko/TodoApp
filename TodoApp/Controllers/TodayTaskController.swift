@@ -84,7 +84,7 @@ class TodayTaskController: UIViewController {
     }
     
     private func deleteTask(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
-        let alertController = UIAlertController(title: Consts.Text.delete, message: Const.deleteTaskAlertMessage, preferredStyle: .alert)
+        let alertController = UIAlertController(title: Consts.Text.delete, message: Consts.Text.deleteTaskAlertMessage, preferredStyle: .alert)
         let cancel = UIAlertAction(title: Consts.Text.cancel, style: .cancel, handler: nil)
         let delete = UIAlertAction(title: Consts.Text.delete, style: .destructive, handler: { (alertAction) -> Void in
             self.tableView(self.tableView, commit: .delete, forRowAt: indexPath)
@@ -230,6 +230,4 @@ extension TodayTaskController: AddTaskSaveDelegate {
 fileprivate struct Const {
     static let sectionTitlePendingTasks = " "
     static let sectionTitleCompletedTasks = "Completed"
-    static let deleteTaskAlertMessage = "Do you want to delete task?"
-    
 }
