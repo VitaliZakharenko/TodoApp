@@ -275,6 +275,9 @@
                                             <segment title="Date"/>
                                             <segment title="Group"/>
                                         </segments>
+                                        <connections>
+                                            <action selector="sortCateoryInSegmentedControlChanged:" destination="hMb-oT-CTp" eventType="valueChanged" id="a4o-Oo-46b"/>
+                                        </connections>
                                     </segmentedControl>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

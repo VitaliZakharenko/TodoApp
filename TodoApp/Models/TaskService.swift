@@ -21,6 +21,12 @@ class TaskService {
         categories.append(contentsOf: predefinedCategories())
     }
     
+    func allCategories() -> [TaskCategory]{
+        var all = categories
+        all.append(inboxCategory)
+        return all
+    }
+    
     func completedTasks() -> [Task] {
         var tasks = [Task]()
         tasks.append(contentsOf: inboxCategory.completedTasks())

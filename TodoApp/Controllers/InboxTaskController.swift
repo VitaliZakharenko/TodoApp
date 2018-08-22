@@ -26,6 +26,11 @@ class InboxTaskController: UIViewController {
     
     private var groupedTasksWithReminder: [[Task]]!
     private var tasksWithoutReminder: [Task] = [Task]()
+    
+    private var groupedByCategory: [String: [Task]]!
+    private var groupedByCategoriesCategoryNames: [String]!
+    private var groupedByCategoriesTasks: [[Task]]!
+    
     private var sectionDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = Const.sectionDateFormat
@@ -76,12 +81,24 @@ class InboxTaskController: UIViewController {
         let withReminder = TaskService.shared.tasksBy(predicate: { $0.isReminded })
         tasksWithoutReminder = TaskService.shared.tasksBy(predicate: { !$0.isReminded })
         groupedTasksWithReminder = groupByRemindDay(tasks: withReminder)
+        
+        groupedByCategory = groupByCategory(categories: TaskService.shared.allCategories())
     }
     
     private func reloadData(){
         loadData()
         sortTasks(by: sortOrder)
         tableView.reloadData()
+    }
+    
+    
+    private func groupByCategory(categories: [TaskCategory]) -> [String: [Task]] {
+        var groups = [String: [Task]]()
+        
+        for category in categories {
+            groups[category.name] = category.allTasks()
+        }
+        return groups
     }
     
     private func groupByRemindDay(tasks: [Task]) -> [[Task]] {
@@ -99,10 +116,15 @@ class InboxTaskController: UIViewController {
     }
     
     private func taskFor(indexPath: IndexPath) -> Task {
-        if indexPath.section == (numberOfSections(in: tableView) - 1) {
-            return tasksWithoutReminder[indexPath.row]
-        } else {
-            return groupedTasksWithReminder[indexPath.section][indexPath.row]
+        switch sortOrder {
+        case .byDate(_):
+            if indexPath.section == (numberOfSections(in: tableView) - 1) {
+                return tasksWithoutReminder[indexPath.row]
+            } else {
+                return groupedTasksWithReminder[indexPath.section][indexPath.row]
+            }
+        case .byGroup(_):
+            return groupedByCategoriesTasks[indexPath.section][indexPath.row]
         }
     }
     
@@ -118,6 +140,23 @@ class InboxTaskController: UIViewController {
             for var group in groupedTasksWithReminder {
                 group.sort(by: { $0.remindDate! >= $1.remindDate! })
             }
+        case .byGroup(let ascend):
+            groupedByCategoriesCategoryNames = [String]()
+            groupedByCategoriesTasks = [[Task]]()
+            
+            let keys: [String] = {
+                if ascend {
+                    return groupedByCategory.keys.sorted(by: {$0 < $1})
+                } else {
+                    return groupedByCategory.keys.sorted(by: {$0 >= $1})
+                }
+            }()
+            
+            for categoryName in keys{
+                groupedByCategoriesCategoryNames.append(categoryName)
+                groupedByCategoriesTasks.append(groupedByCategory[categoryName]!)
+            }
+            
         default:
             fatalError("Unknown sorting \(sortOrder)")
         }
@@ -127,8 +166,7 @@ class InboxTaskController: UIViewController {
     private func changeSortOrder(){
         switch sortOrder {
         case .byDate(let ascend): sortOrder = .byDate(ascend: !ascend)
-        default:
-            fatalError("Unknown sorting \(sortOrder)")
+        case .byGroup(let ascend): sortOrder = .byGroup(ascend: !ascend)
         }
     }
     
@@ -167,6 +205,19 @@ class InboxTaskController: UIViewController {
         changeSortOrder()
         sortTasks(by: sortOrder)
         tableView.reloadData()
+    }
+    
+    
+    @IBAction func sortCateoryInSegmentedControlChanged(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            sortOrder = .byDate(ascend: true)
+        case 1:
+            sortOrder = .byGroup(ascend: true)
+        default:
+            fatalError("Unknown index \(sender.selectedSegmentIndex) in segmented control")
+        }
+        reloadData()
     }
     
 
@@ -217,11 +268,17 @@ extension InboxTaskController: UITableViewDelegate {
     
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == (numberOfSections(in: tableView) - 1) {
-            return Const.noReminderSectionTitle
-        } else {
-            let sectionDate = groupedTasksWithReminder[section][0].remindDate!
-            return sectionDateFormatter.string(from: sectionDate)
+        switch sortOrder {
+        case .byDate(_):
+            if section == (numberOfSections(in: tableView) - 1) {
+                return Const.noReminderSectionTitle
+            } else {
+                let sectionDate = groupedTasksWithReminder[section][0].remindDate!
+                return sectionDateFormatter.string(from: sectionDate)
+            }
+        
+        case .byGroup(_):
+            return groupedByCategoriesCategoryNames[section]
         }
     }
     
@@ -247,15 +304,28 @@ extension InboxTaskController: UITableViewDelegate {
 extension InboxTaskController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return groupedTasksWithReminder.count + 1
+        switch sortOrder {
+        case .byDate(_):
+            return groupedTasksWithReminder.count + 1
+        case .byGroup(_):
+            return groupedByCategoriesCategoryNames.count
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == (numberOfSections(in: tableView) - 1){
-            return tasksWithoutReminder.count
-        } else {
-            return groupedTasksWithReminder[section].count
+        
+        switch sortOrder {
+        case .byDate(_):
+            if section == (numberOfSections(in: tableView) - 1){
+                return tasksWithoutReminder.count
+            } else {
+                return groupedTasksWithReminder[section].count
+            }
+        
+        case .byGroup(_):
+            return groupedByCategoriesTasks[section].count
         }
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
