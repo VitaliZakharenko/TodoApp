@@ -12,46 +12,69 @@ class TaskService {
     
     static let shared = TaskService()
     
-    private var tasks = [Task]()
+    private var categories = [TaskCategory]()
+    private var inboxCategory: TaskCategory = TaskCategory(id: UUID().uuidString, name: "Inbox")
     
     
     init(){
-        tasks.append(contentsOf: predefinedTestTasks())
+        inboxCategory.add(tasks: predefinedTestTasks())
+        categories.append(contentsOf: predefinedCategories())
     }
     
     func completedTasks() -> [Task] {
-        return tasks.filter({ $0.isCompleted })
-    }
-    
-    func pendingTasks() -> [Task] {
-        return tasks.filter({ !$0.isCompleted })
-    }
-    
-    func tasksBy(predicate: ((Task) -> Bool)) -> [Task] {
-        return tasks.filter(predicate)
-    }
-    
-    func allTasks() -> [Task] {
+        var tasks = [Task]()
+        tasks.append(contentsOf: inboxCategory.completedTasks())
+        for category in categories {
+            tasks.append(contentsOf: category.completedTasks())
+        }
         return tasks
     }
     
-    func add(task: Task) {
-        if tasks.index(where: { $0.id == task.id }) != nil {
-            return
+    func pendingTasks() -> [Task] {
+        var tasks = [Task]()
+        tasks.append(contentsOf: inboxCategory.pendingTasks())
+        for category in categories {
+            tasks.append(contentsOf: category.pendingTasks())
+        }
+        return tasks
+    }
+    
+    func tasksBy(predicate: ((Task) -> Bool)) -> [Task] {
+        return allTasks().filter(predicate)
+    }
+    
+    func allTasks() -> [Task] {
+        var tasks = [Task]()
+        tasks.append(contentsOf: inboxCategory.allTasks())
+        for category in categories {
+            tasks.append(contentsOf: category.allTasks())
+        }
+        return tasks
+    }
+    
+    func add(task: Task, category: TaskCategory? = nil) {
+        if let category = category {
+            for (idx, serviceCategory) in categories.enumerated() {
+                if serviceCategory.id == category.id {
+                    categories[idx].add(task: task)
+                }
+            }
         } else {
-            tasks.append(task)
+            inboxCategory.add(task: task)
         }
     }
     
     func remove(task: Task){
-        if let index = tasks.index(where: { $0.id == task.id }){
-            tasks.remove(at: index)
+        inboxCategory.remove(task: task)
+        for (idx, _) in categories.enumerated() {
+            categories[idx].remove(task: task)
         }
     }
     
     func update(task: Task){
-        if let index = tasks.index(where: { $0.id == task.id }){
-            tasks[index] = task
+        inboxCategory.update(task: task)
+        for (idx, _) in categories.enumerated(){
+            categories[idx].update(task: task)
         }
     }
     
@@ -67,5 +90,17 @@ class TaskService {
         let t7 = Task(id: UUID().uuidString, name: "TestTask7", description: nil, remindDate: Date())
         
         return [t1, t2, t3, t4, t5, t6, t7]
+    }
+    
+    private func predefinedCategories() -> [TaskCategory] {
+        var category1 = TaskCategory(id: UUID().uuidString, name: "Work")
+        let task1 = Task(id: UUID().uuidString, name: "WorkCategoryTask1", description: "Work", remindDate: Date())
+        let task2 = Task(id: UUID().uuidString, name: "WorkCategoryTask2", description: "WorkTask2", remindDate: nil)
+        category1.add(tasks: [task1, task2])
+        var category2 = TaskCategory(id: UUID().uuidString, name: "Blablabla")
+        let blabla1 = Task(id: UUID().uuidString, name: "Blabla1", description: nil, remindDate: Date())
+        let blabla2 = Task(id: UUID().uuidString, name: "Blabla2", description: "Blablabla", remindDate: Date())
+        category2.add(tasks: [blabla1, blabla2])
+        return [category1, category2]
     }
 }

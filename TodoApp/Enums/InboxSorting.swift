@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum SortOrder {
-    case ascending
-    case descending
+enum InboxSorting {
+    case byDate(ascend: Bool)
+    case byGroup(ascend: Bool)
 }

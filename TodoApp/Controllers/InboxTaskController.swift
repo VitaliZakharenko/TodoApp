@@ -22,7 +22,7 @@ class InboxTaskController: UIViewController {
     
     
     
-    private var sortOrder: SortOrder = .ascending
+    private var sortOrder: InboxSorting = .byDate(ascend: true)
     
     private var groupedTasksWithReminder: [[Task]]!
     private var tasksWithoutReminder: [Task] = [Task]()
@@ -41,6 +41,7 @@ class InboxTaskController: UIViewController {
         loadData()
         configureTableView()
         sortTasks(by: sortOrder)
+        tableView.reloadData()
     }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -80,6 +81,7 @@ class InboxTaskController: UIViewController {
     private func reloadData(){
         loadData()
         sortTasks(by: sortOrder)
+        tableView.reloadData()
     }
     
     private func groupByRemindDay(tasks: [Task]) -> [[Task]] {
@@ -104,26 +106,29 @@ class InboxTaskController: UIViewController {
         }
     }
     
-    private func sortTasks(by sortOrder: SortOrder) {
+    private func sortTasks(by sortOrder: InboxSorting) {
         switch sortOrder {
-        case .ascending:
+        case .byDate(let ascend) where ascend == true:
             groupedTasksWithReminder.sort(by: { $0[0].remindDate! < $1[0].remindDate! })
             for var group in groupedTasksWithReminder {
                 group.sort(by: { $0.remindDate! < $1.remindDate! })
             }
-        case .descending:
+        case .byDate(let ascend) where ascend == false:
             groupedTasksWithReminder.sort(by: { $0[0].remindDate! >= $1[0].remindDate! })
             for var group in groupedTasksWithReminder {
                 group.sort(by: { $0.remindDate! >= $1.remindDate! })
             }
+        default:
+            fatalError("Unknown sorting \(sortOrder)")
         }
-        tableView.reloadData()
+        
     }
     
     private func changeSortOrder(){
         switch sortOrder {
-        case .ascending: sortOrder = .descending
-        case .descending: sortOrder = .ascending
+        case .byDate(let ascend): sortOrder = .byDate(ascend: !ascend)
+        default:
+            fatalError("Unknown sorting \(sortOrder)")
         }
     }
     
@@ -161,6 +166,7 @@ class InboxTaskController: UIViewController {
     @IBAction func sortOrderChanged(_ sender: UIBarButtonItem) {
         changeSortOrder()
         sortTasks(by: sortOrder)
+        tableView.reloadData()
     }
     
 
