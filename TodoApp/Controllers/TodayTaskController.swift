@@ -49,17 +49,6 @@ class TodayTaskController: UIViewController {
     }
     
     
-    //MARK: - Private Methods
-    
-    private func taskFor(indexPath: IndexPath) -> Task {
-        
-        let tasks: [Task] = {
-            switch indexPath.section {
-            case 0:
-                return TaskService.shared.pendingTasks()
-            case 1:
-                return TaskService.shared.completedTasks()
-    }
     
     //MARK: - Private Methods
     
