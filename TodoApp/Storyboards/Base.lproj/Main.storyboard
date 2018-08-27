@@ -35,7 +35,11 @@
                         <viewLayoutGuide key="safeArea" id="plx-bP-WAZ"/>
                     </view>
                     <navigationItem key="navigationItem" title="All Tasks" id="GOT-gF-aWs">
-                        <barButtonItem key="rightBarButtonItem" title="Item" image="right_add_detail" id="IIC-11-4mH"/>
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="right_add_detail" id="IIC-11-4mH">
+                            <connections>
+                                <segue destination="XEh-b9-b1c" kind="show" identifier="ShowAddCategorySegue" id="mAy-Jn-Oir"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="Gjr-lC-6fI" id="dGu-DJ-Eq4"/>
@@ -44,6 +48,72 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OTQ-4Z-TqO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-739" y="-940"/>
+        </scene>
+        <!--Add Project-->
+        <scene sceneID="v27-Da-7aB">
+            <objects>
+                <tableViewController id="XEh-b9-b1c" customClass="AddCategoryController" customModule="TodoApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="zpn-No-5Mb">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <sections>
+                            <tableViewSection headerTitle="Project" id="0Yb-al-rby">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="44" id="ryg-Vw-ydq">
+                                        <rect key="frame" x="0.0" y="28" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ryg-Vw-ydq" id="SQw-sB-ZHe">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ZBj-Ae-Yzk">
+                                                    <rect key="frame" x="10" y="5" width="305" height="33.5"/>
+                                                    <nil key="textColor"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <action selector="changedTextInTextField:" destination="XEh-b9-b1c" eventType="editingChanged" id="nXz-el-BIC"/>
+                                                    </connections>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="ZBj-Ae-Yzk" secondAttribute="bottom" constant="5" id="5gW-sP-XVh"/>
+                                                <constraint firstAttribute="trailing" secondItem="ZBj-Ae-Yzk" secondAttribute="trailing" constant="5" id="Jka-zJ-gi5"/>
+                                                <constraint firstItem="ZBj-Ae-Yzk" firstAttribute="top" secondItem="SQw-sB-ZHe" secondAttribute="top" constant="5" id="WIe-T3-YW0"/>
+                                                <constraint firstItem="ZBj-Ae-Yzk" firstAttribute="leading" secondItem="SQw-sB-ZHe" secondAttribute="leading" constant="10" id="jeU-du-nEU"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="XEh-b9-b1c" id="UM6-RW-EKQ"/>
+                            <outlet property="delegate" destination="XEh-b9-b1c" id="saD-zV-hRO"/>
+                        </connections>
+                    </tableView>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" title="Add Project" id="QYG-eT-BeE">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="q1h-Cb-Hex">
+                            <connections>
+                                <action selector="cancelAddCategory:" destination="XEh-b9-b1c" id="s6R-3a-qAa"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="hWf-XK-7fr">
+                            <connections>
+                                <action selector="doneAddCategory:" destination="XEh-b9-b1c" id="kz2-2s-K1O"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="categoryNameTextField" destination="ZBj-Ae-Yzk" id="Oab-hw-Ls5"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gvD-c7-9Km" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="107" y="-940"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="5aX-Mq-zDj">

@@ -85,6 +85,27 @@ class TaskService {
     }
     
     
+    func add(category: TaskCategory){
+        if categories.index(where: { $0.id == category.id }) != nil {
+            return
+        } else {
+            categories.append(category)
+        }
+    }
+    
+    func update(category: TaskCategory){
+        if let index = categories.index(where: { $0.id == category.id }) {
+            categories[index] = category
+        }
+    }
+    
+    func remove(category: TaskCategory){
+        if let index = categories.index(where: { $0.id == category.id }) {
+            categories.remove(at: index)
+        }
+    }
+    
+    
     private func predefinedTestTasks() -> [Task] {
         let t1 = Task(id: UUID().uuidString, name: "First", description: nil, remindDate: Date())
         let t2 = Task(id: UUID().uuidString, name: "Second", description: nil, remindDate: nil)

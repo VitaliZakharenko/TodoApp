@@ -31,6 +31,15 @@ class AllTasksController: UIViewController {
         tableView.setEditing(editing, animated: true)
     }
     
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == Consts.Identifiers.showAddCategorySegue {
+            if let destination = segue.destination as? AddCategoryController {
+                destination.addCategoryDelegate = self
+            }
+        }
+    }
+    
     //MARK: - Private Methods
     
     private func taskCategory(for indexPath: IndexPath) -> TaskCategory {
@@ -121,4 +130,18 @@ extension AllTasksController: UITableViewDataSource {
         }
         
     }
+}
+
+
+//MARK: - AddCategoryDelegate
+
+extension AllTasksController: AddCategoryDelegate {
+    
+    func add(category: TaskCategory) {
+        TaskService.shared.add(category: category)
+        loadData()
+        tableView.reloadData()
+    }
+    
+    
 }

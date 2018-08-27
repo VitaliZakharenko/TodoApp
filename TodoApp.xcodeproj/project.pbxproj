@@ -38,6 +38,8 @@
 		F8EFD8182134174D00954753 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EFD8172134174D00954753 /* CategoryCell.swift */; };
 		F8EFD81A213421BD00954753 /* AddCategoryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8EFD819213421BD00954753 /* AddCategoryCell.xib */; };
 		F8EFD81C213422D500954753 /* AddCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EFD81B213422D500954753 /* AddCategoryCell.swift */; };
+		F8EFD81E21342EAD00954753 /* AddCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EFD81D21342EAD00954753 /* AddCategoryController.swift */; };
+		F8EFD82021342F3F00954753 /* AddCategoryDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EFD81F21342F3F00954753 /* AddCategoryDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +97,8 @@
 		F8EFD8172134174D00954753 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		F8EFD819213421BD00954753 /* AddCategoryCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddCategoryCell.xib; sourceTree = "<group>"; };
 		F8EFD81B213422D500954753 /* AddCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryCell.swift; sourceTree = "<group>"; };
+		F8EFD81D21342EAD00954753 /* AddCategoryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryController.swift; sourceTree = "<group>"; };
+		F8EFD81F21342F3F00954753 /* AddCategoryDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +131,7 @@
 			children = (
 				F830267E211C4361007638FD /* AddTaskSaveDelegate.swift */,
 				F838DE30211F93BB000F49CD /* SelectDateDelegate.swift */,
+				F8EFD81F21342F3F00954753 /* AddCategoryDelegate.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -187,6 +192,7 @@
 				F838DE2E211F21EF000F49CD /* SelectDateController.swift */,
 				F8DBB60D2125AFC2003DE156 /* InboxTaskController.swift */,
 				F8EFD813213414D200954753 /* AllTasksController.swift */,
+				F8EFD81D21342EAD00954753 /* AddCategoryController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -419,6 +425,7 @@
 				F87F54CD21108E2E00ED206E /* TodayTaskController.swift in Sources */,
 				F8EFD81C213422D500954753 /* AddCategoryCell.swift in Sources */,
 				F85B2FC92112346D0009177B /* Date+String.swift in Sources */,
+				F8EFD82021342F3F00954753 /* AddCategoryDelegate.swift in Sources */,
 				F838DE31211F93BB000F49CD /* SelectDateDelegate.swift in Sources */,
 				F87F54F921109C4D00ED206E /* Task.swift in Sources */,
 				F85B2FC621122F7E0009177B /* Consts.swift in Sources */,
@@ -429,6 +436,7 @@
 				F838EFE4211D8FDB00D6225E /* Priority.swift in Sources */,
 				F85DCB9C2121AB510001C547 /* UIColor+String.swift in Sources */,
 				F8EFD8182134174D00954753 /* CategoryCell.swift in Sources */,
+				F8EFD81E21342EAD00954753 /* AddCategoryController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

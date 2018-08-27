@@ -14,8 +14,10 @@ struct Consts {
         static let categoryCell = "CategoryCell"
         static let addCategoryCell = "AddCategoryCell"
         static let showAddTaskSegue = "ShowAddTaskSegue"
+        static let showAddCategorySegue = "ShowAddCategorySegue"
         static let addTaskController = "AddTaskControllerId"
     }
+    
     
     struct Text {
         static let done = "Done"
