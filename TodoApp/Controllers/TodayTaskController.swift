@@ -22,6 +22,7 @@ class TodayTaskController: UIViewController {
         super.viewDidLoad()
         
         let nib = UINib(nibName: Const.nibTaskCell, bundle: nil)
+
         tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.todayTasksCell)
         tableView.delegate = self
         tableView.dataSource = self
@@ -58,13 +59,23 @@ class TodayTaskController: UIViewController {
                 return TaskService.shared.pendingTasks()
             case 1:
                 return TaskService.shared.completedTasks()
+    }
+    
+    //MARK: - Private Methods
+    
+    func taskFor(indexPath: IndexPath) -> Task {
+        let task: Task = {
+            switch indexPath.section {
+            case 0:
+                return TaskService.shared.pendingTasks()[indexPath.row]
+            case 1:
+                return TaskService.shared.completedTasks()[indexPath.row]
             default:
                 fatalError("Unknown section \(indexPath.section)")
             }
         }()
         
-        
-        return tasks[indexPath.row]
+        return task
     }
     
     private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
@@ -234,5 +245,4 @@ fileprivate struct Const {
     static let sectionTitlePendingTasks = " "
     static let sectionTitleCompletedTasks = "Completed"
     static let deleteTaskAlertMessage = "Do you want to delete task?"
-    
 }

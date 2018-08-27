@@ -11,7 +11,8 @@ import Foundation
 class TaskService {
     
     static let shared = TaskService()
-    
+
+  
     private var tasks = [Task]()
     
     
@@ -37,6 +38,7 @@ class TaskService {
     
     func remove(task: Task){
         if let index = tasks.index(where: { $0.id == task.id }){
+
             tasks.remove(at: index)
         }
     }
