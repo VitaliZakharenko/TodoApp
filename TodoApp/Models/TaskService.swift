@@ -13,7 +13,7 @@ class TaskService {
     static let shared = TaskService()
     
     private var categories = [TaskCategory]()
-    private var inboxCategory: TaskCategory = TaskCategory(id: UUID().uuidString, name: "Inbox")
+    private var inboxCategory: TaskCategory = TaskCategory(id: UUID().uuidString, name: Consts.Categories.inboxName)
     
     
     init(){

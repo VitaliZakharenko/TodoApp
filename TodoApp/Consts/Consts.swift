@@ -11,6 +11,8 @@ import Foundation
 struct Consts {
     struct Identifiers {
         static let taskCell = "TaskCell"
+        static let categoryCell = "CategoryCell"
+        static let addCategoryCell = "AddCategoryCell"
         static let showAddTaskSegue = "ShowAddTaskSegue"
         static let addTaskController = "AddTaskControllerId"
     }
@@ -30,9 +32,15 @@ struct Consts {
     
     struct Nibs {
         static let taskCell = "TaskCell"
+        static let categoryCell = "CategoryCell"
+        static let addCategoryCell = "AddCategoryCell"
     }
     
     struct Storyboards {
         static let main = "Main"
+    }
+    
+    struct Categories {
+        static let inboxName = "Inbox"
     }
 }

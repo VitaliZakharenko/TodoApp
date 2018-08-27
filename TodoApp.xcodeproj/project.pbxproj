@@ -33,6 +33,11 @@
 		F87F54FD21109FBE00ED206E /* TaskService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87F54FC21109FBE00ED206E /* TaskService.swift */; };
 		F8DBB60E2125AFC2003DE156 /* InboxTaskController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DBB60D2125AFC2003DE156 /* InboxTaskController.swift */; };
 		F8DBB6102125C65E003DE156 /* Date+Comparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DBB60F2125C65E003DE156 /* Date+Comparison.swift */; };
+		F8EFD814213414D200954753 /* AllTasksController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EFD813213414D200954753 /* AllTasksController.swift */; };
+		F8EFD8162134159900954753 /* CategoryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8EFD8152134159900954753 /* CategoryCell.xib */; };
+		F8EFD8182134174D00954753 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EFD8172134174D00954753 /* CategoryCell.swift */; };
+		F8EFD81A213421BD00954753 /* AddCategoryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8EFD819213421BD00954753 /* AddCategoryCell.xib */; };
+		F8EFD81C213422D500954753 /* AddCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EFD81B213422D500954753 /* AddCategoryCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +90,11 @@
 		F87F54FC21109FBE00ED206E /* TaskService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskService.swift; sourceTree = "<group>"; };
 		F8DBB60D2125AFC2003DE156 /* InboxTaskController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxTaskController.swift; sourceTree = "<group>"; };
 		F8DBB60F2125C65E003DE156 /* Date+Comparison.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Comparison.swift"; sourceTree = "<group>"; };
+		F8EFD813213414D200954753 /* AllTasksController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllTasksController.swift; sourceTree = "<group>"; };
+		F8EFD8152134159900954753 /* CategoryCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CategoryCell.xib; sourceTree = "<group>"; };
+		F8EFD8172134174D00954753 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
+		F8EFD819213421BD00954753 /* AddCategoryCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddCategoryCell.xib; sourceTree = "<group>"; };
+		F8EFD81B213422D500954753 /* AddCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +186,7 @@
 				F8367AB221199950008C4E6C /* AddTaskController.swift */,
 				F838DE2E211F21EF000F49CD /* SelectDateController.swift */,
 				F8DBB60D2125AFC2003DE156 /* InboxTaskController.swift */,
+				F8EFD813213414D200954753 /* AllTasksController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -185,6 +196,10 @@
 			children = (
 				F87526272112286D0088E746 /* TaskCell.swift */,
 				F8367AB02117277D008C4E6C /* TaskCell.xib */,
+				F8EFD8152134159900954753 /* CategoryCell.xib */,
+				F8EFD8172134174D00954753 /* CategoryCell.swift */,
+				F8EFD819213421BD00954753 /* AddCategoryCell.xib */,
+				F8EFD81B213422D500954753 /* AddCategoryCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -362,7 +377,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F8367AB12117277D008C4E6C /* TaskCell.xib in Resources */,
+				F8EFD8162134159900954753 /* CategoryCell.xib in Resources */,
 				F87F54D521108E2E00ED206E /* LaunchScreen.storyboard in Resources */,
+				F8EFD81A213421BD00954753 /* AddCategoryCell.xib in Resources */,
 				F87F54D221108E2E00ED206E /* Assets.xcassets in Resources */,
 				F838DE2D211F1CEB000F49CD /* SelectDate.xib in Resources */,
 				F87F54D021108E2E00ED206E /* Main.storyboard in Resources */,
@@ -393,12 +410,14 @@
 			files = (
 				F87F54FD21109FBE00ED206E /* TaskService.swift in Sources */,
 				F838DE2F211F21EF000F49CD /* SelectDateController.swift in Sources */,
+				F8EFD814213414D200954753 /* AllTasksController.swift in Sources */,
 				F830267F211C4361007638FD /* AddTaskSaveDelegate.swift in Sources */,
 				F85DCB9A212182AF0001C547 /* Section.swift in Sources */,
 				F8362DE52126B9C0009699DA /* InboxSorting.swift in Sources */,
 				F87F54FB21109DA300ED206E /* TaskCategory.swift in Sources */,
 				F8DBB6102125C65E003DE156 /* Date+Comparison.swift in Sources */,
 				F87F54CD21108E2E00ED206E /* TodayTaskController.swift in Sources */,
+				F8EFD81C213422D500954753 /* AddCategoryCell.swift in Sources */,
 				F85B2FC92112346D0009177B /* Date+String.swift in Sources */,
 				F838DE31211F93BB000F49CD /* SelectDateDelegate.swift in Sources */,
 				F87F54F921109C4D00ED206E /* Task.swift in Sources */,
@@ -409,6 +428,7 @@
 				F87F54CB21108E2E00ED206E /* AppDelegate.swift in Sources */,
 				F838EFE4211D8FDB00D6225E /* Priority.swift in Sources */,
 				F85DCB9C2121AB510001C547 /* UIColor+String.swift in Sources */,
+				F8EFD8182134174D00954753 /* CategoryCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

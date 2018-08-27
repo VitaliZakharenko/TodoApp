@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CategoryCell" customModule="TodoApp" customModuleProvider="target"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="CategoryCell" id="aH9-tv-tgt" customClass="CategoryCell" customModule="TodoApp" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="aH9-tv-tgt" id="bb3-mH-epJ">
+                <rect key="frame" x="0.0" y="0.0" width="341" height="44"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Work" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="240-Mq-S5P">
+                        <rect key="frame" x="15" y="12" width="40" height="19"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(3)" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CFu-I5-DTz">
+                        <rect key="frame" x="276" y="12" width="50" height="19"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="bS8-Wh-KwP"/>
+                            <constraint firstAttribute="width" constant="50" id="xqZ-rY-JHc"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="textColor" white="0.0" alpha="0.5" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="240-Mq-S5P" firstAttribute="leading" secondItem="bb3-mH-epJ" secondAttribute="leading" constant="15" id="COj-ac-5wX"/>
+                    <constraint firstItem="240-Mq-S5P" firstAttribute="top" secondItem="bb3-mH-epJ" secondAttribute="top" constant="12" id="D5w-bp-EUz"/>
+                    <constraint firstItem="CFu-I5-DTz" firstAttribute="top" secondItem="bb3-mH-epJ" secondAttribute="top" constant="12" id="E8J-Me-RKM"/>
+                    <constraint firstAttribute="trailing" secondItem="CFu-I5-DTz" secondAttribute="trailing" constant="15" id="bCh-iz-Vs7"/>
+                    <constraint firstAttribute="bottom" secondItem="CFu-I5-DTz" secondAttribute="bottom" constant="12" id="ckN-f9-RY6"/>
+                    <constraint firstAttribute="bottom" secondItem="240-Mq-S5P" secondAttribute="bottom" constant="12" id="yUI-Kc-nQT"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="categoryNameLabel" destination="240-Mq-S5P" id="5NG-6G-aqc"/>
+                <outlet property="numberOfTasksLabel" destination="CFu-I5-DTz" id="Skc-Ly-w8J"/>
+            </connections>
+            <point key="canvasLocation" x="20" y="12"/>
+        </tableViewCell>
+    </objects>
+</document>
