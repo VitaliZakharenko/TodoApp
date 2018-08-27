@@ -21,8 +21,10 @@ class TodayTaskController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let nib = UINib(nibName: Consts.Nibs.taskCell, bundle: nil)
-        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.taskCell)
+
+        let nib = UINib(nibName: Const.nibTaskCell, bundle: nil)
+
+        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.todayTasksCell)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
@@ -48,23 +50,22 @@ class TodayTaskController: UIViewController {
     }
     
     
+    
     //MARK: - Private Methods
     
-    private func taskFor(indexPath: IndexPath) -> Task {
-        
-        let tasks: [Task] = {
+    func taskFor(indexPath: IndexPath) -> Task {
+        let task: Task = {
             switch indexPath.section {
             case 0:
-                return TaskService.shared.pendingTasks()
+                return TaskService.shared.pendingTasks()[indexPath.row]
             case 1:
-                return TaskService.shared.completedTasks()
+                return TaskService.shared.completedTasks()[indexPath.row]
             default:
                 fatalError("Unknown section \(indexPath.section)")
             }
         }()
         
-        
-        return tasks[indexPath.row]
+        return task
     }
     
     private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
@@ -230,4 +231,5 @@ extension TodayTaskController: AddTaskSaveDelegate {
 fileprivate struct Const {
     static let sectionTitlePendingTasks = " "
     static let sectionTitleCompletedTasks = "Completed"
+    static let deleteTaskAlertMessage = "Do you want to delete task?"
 }
