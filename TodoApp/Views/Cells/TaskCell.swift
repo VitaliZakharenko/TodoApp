@@ -11,7 +11,8 @@ import UIKit
 class TaskCell: UITableViewCell {
     
     //MARK: - Properties
-
+    
+    
     @IBOutlet weak var taskNameLabel: UILabel!
     @IBOutlet weak var taskDescriptionLabel: UILabel!
     @IBOutlet weak var taskDateLabel: UILabel!

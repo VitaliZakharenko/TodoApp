@@ -12,13 +12,12 @@ class TaskCategory {
     
     let id: String
     var name: String
-    private var tasks: [Task]
+    private var tasks = [Task]()
     
     
     init(id: String, name: String){
         self.id = id
         self.name = name
-        tasks = [Task]()
     }
     
     func add(task: Task){

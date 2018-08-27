@@ -13,8 +13,11 @@ struct Task {
     // not used yet, empty string
     let id: String
     var name: String
-    var planned: Date
+    var description: String?
+    var remindDate: Date?
     var completed: Date?
+    
+    var priority: Priority
     
     var isCompleted: Bool {
         get {
@@ -22,10 +25,19 @@ struct Task {
         }
     }
     
-    init(id: String, name: String, planned: Date){
-        self.id = id
-        self.name = name
-        self.planned = planned
+    var isReminded: Bool {
+        get {
+            return remindDate != nil
+        }
     }
     
+    init(id: String, name: String, description: String?, remindDate: Date?, priority: Priority = .none){
+        self.id = id
+        self.name = name
+        self.description = description
+        self.remindDate = remindDate
+        self.priority = priority
+    }
+    
+
 }
