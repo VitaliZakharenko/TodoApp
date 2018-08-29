@@ -22,9 +22,9 @@ class TodayTaskController: UIViewController {
         super.viewDidLoad()
         
 
-        let nib = UINib(nibName: Const.nibTaskCell, bundle: nil)
+        let nib = UINib(nibName: Consts.Nibs.taskCell, bundle: nil)
 
-        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.todayTasksCell)
+        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.taskCell)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
