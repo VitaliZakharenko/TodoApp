@@ -30,6 +30,7 @@ class AllTasksController: UIViewController {
         super.viewDidLoad()
         loadData()
         configureTableView()
+        navigationItem.leftBarButtonItem = editButtonItem
     }
     
     
@@ -78,7 +79,6 @@ class AllTasksController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
-        navigationItem.leftBarButtonItem = editButtonItem
     }
     
     
