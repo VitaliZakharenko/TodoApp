@@ -58,30 +58,43 @@ class TaskService {
         return tasks
     }
     
-    func add(task: Task, category: TaskCategory? = nil) {
+    @discardableResult
+    func add(task: Task, category: TaskCategory? = nil) -> TaskCategory? {
         if let category = category {
             for (idx, serviceCategory) in categories.enumerated() {
                 if serviceCategory.id == category.id {
                     categories[idx].add(task: task)
+                    return categories[idx]
                 }
             }
+            return nil
         } else {
             inboxCategory.add(task: task)
+            return inboxCategory
         }
     }
     
-    func remove(task: Task){
+    @discardableResult
+    func remove(task: Task) -> TaskCategory? {
         inboxCategory.remove(task: task)
         for (idx, _) in categories.enumerated() {
-            categories[idx].remove(task: task)
+            if(categories[idx].remove(task: task)){
+                return categories[idx]
+            }
         }
+        return nil
     }
     
-    func update(task: Task){
+    
+    @discardableResult
+    func update(task: Task) -> TaskCategory? {
         inboxCategory.update(task: task)
         for (idx, _) in categories.enumerated(){
-            categories[idx].update(task: task)
+            if(categories[idx].update(task: task)){
+                return categories[idx]
+            }
         }
+        return nil
     }
     
     

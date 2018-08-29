@@ -25,6 +25,13 @@ class AllTasksController: UIViewController {
         loadData()
         configureTableView()
     }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadData()
+        tableView.reloadData()
+    }
 
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: true)
@@ -67,6 +74,21 @@ class AllTasksController: UIViewController {
         tableView.tableFooterView = UIView()
         navigationItem.leftBarButtonItem = editButtonItem
     }
+    
+    
+    private func showAddCategoryController(){
+        let storyboard = UIStoryboard(name: Consts.Storyboards.main, bundle: Bundle.main)
+        let addCategoryController = storyboard.instantiateViewController(withIdentifier: Consts.Identifiers.addCategoryController) as! AddCategoryController
+        addCategoryController.addCategoryDelegate = self
+        navigationController?.pushViewController(addCategoryController, animated: true)
+    }
+    
+    private func showAllTasks(of category: TaskCategory){
+        let storyboard = UIStoryboard(name: Consts.Storyboards.main, bundle: Bundle.main)
+        let tasksController = storyboard.instantiateViewController(withIdentifier: Consts.Identifiers.allTasksOfCategoryController) as! TodayTaskController
+        tasksController.category = category
+        navigationController?.pushViewController(tasksController, animated: true)
+    }
 }
 
 
@@ -89,6 +111,39 @@ extension AllTasksController: UITableViewDelegate {
         let title = self.tableView(self.tableView, titleForHeaderInSection: section)
         sectionView.titleLabel.text = title?.uppercased()
         return sectionView
+    }
+    
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        if (indexPath.section == 1 && indexPath.row == 0) || (indexPath.section == 0) {
+            return false
+        } else {
+            return true
+        }
+    }
+    
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let category = taskCategory(for: indexPath)
+            TaskService.shared.remove(category: category)
+            loadData()
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+    }
+    
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        if indexPath.section == 1 && indexPath.row == 0 {
+            showAddCategoryController()
+            return
+        }
+        
+        let category = taskCategory(for: indexPath)
+        showAllTasks(of: category)
+        
     }
     
 }

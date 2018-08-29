@@ -36,10 +36,14 @@ struct TaskCategory {
         return tasks
     }
     
-    mutating func add(task: Task){
+    
+    @discardableResult
+    mutating func add(task: Task) -> Bool {
         if !tasks.contains(where: {$0.id == task.id}){
             tasks.append(task)
+            return true
         }
+        return false
     }
     
     mutating func add(tasks: [Task]){
@@ -48,17 +52,22 @@ struct TaskCategory {
         }
     }
     
-    
-    mutating func remove(task: Task){
+    @discardableResult
+    mutating func remove(task: Task) -> Bool {
         if let index = tasks.index(where: {$0.id == task.id}){
             tasks.remove(at: index)
+            return true
         }
+        return false
     }
     
-    mutating func update(task: Task){
+    @discardableResult
+    mutating func update(task: Task) -> Bool {
         if let index = tasks.index(where: { $0.id == task.id }){
             tasks[index] = task
+            return true
         }
+        return false
     }
     
 }

@@ -16,6 +16,8 @@ struct Consts {
         static let showAddTaskSegue = "ShowAddTaskSegue"
         static let showAddCategorySegue = "ShowAddCategorySegue"
         static let addTaskController = "AddTaskControllerId"
+        static let addCategoryController = "AddCategoryControllerId"
+        static let allTasksOfCategoryController = "AllTasksOfCategoryId"
     }
     
     

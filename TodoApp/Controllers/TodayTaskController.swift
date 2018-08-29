@@ -8,11 +8,23 @@
 
 import UIKit
 
+
+fileprivate struct Const {
+    static let sectionTitlePendingTasks = " "
+    static let sectionTitleCompletedTasks = "Completed"
+}
+
+
 class TodayTaskController: UIViewController {
     
     //MARK: - Properties
     
     @IBOutlet weak var tableView: UITableView!
+    
+    var category: TaskCategory?
+    
+    private var pendingTasks: [Task]!
+    private var completedTasks: [Task]!
     
     
     //MARK: - Lifecycle
@@ -20,14 +32,17 @@ class TodayTaskController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureNavbar()
+        loadData()
+        configureTableView()
         
-        let nib = UINib(nibName: Consts.Nibs.taskCell, bundle: nil)
-        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.taskCell)
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.tableFooterView = UIView()
-        navigationItem.leftBarButtonItem = editButtonItem
-        
+    }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        loadData()
+        tableView.reloadData()
     }
     
     
@@ -50,28 +65,70 @@ class TodayTaskController: UIViewController {
     
     //MARK: - Private Methods
     
+    
+    private func configureNavbar(){
+        
+        if let category = category {
+            navigationItem.title = category.name
+            let backItem = UIBarButtonItem(title: Consts.Text.back, style: .plain, target: self, action: #selector(backBarItemClicked))
+            navigationItem.leftBarButtonItems = [backItem, editButtonItem]
+        } else {
+            navigationItem.leftBarButtonItem = editButtonItem
+        }
+    }
+    
+    
+    @objc func backBarItemClicked(){
+        navigationController?.popViewController(animated: true)
+    }
+    
+    
+    private func configureTableView(){
+        let nib = UINib(nibName: Consts.Nibs.taskCell, bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.taskCell)
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.tableFooterView = UIView()
+    }
+    
+    private func loadData(updatedCategory: TaskCategory? = nil){
+        
+        if var category = category {
+            
+            if let updated = updatedCategory {
+                self.category = updated
+                category = updated
+            }
+            pendingTasks = category.pendingTasks()
+            completedTasks = category.completedTasks()
+        } else {
+            pendingTasks = TaskService.shared.pendingTasks()
+            completedTasks = TaskService.shared.completedTasks()
+        }
+    }
+    
     private func taskFor(indexPath: IndexPath) -> Task {
         
-        let tasks: [Task] = {
+        let task: Task = {
             switch indexPath.section {
             case 0:
-                return TaskService.shared.pendingTasks()
+                return pendingTasks[indexPath.row]
             case 1:
-                return TaskService.shared.completedTasks()
+                return completedTasks[indexPath.row]
             default:
                 fatalError("Unknown section \(indexPath.section)")
             }
         }()
         
-        
-        return tasks[indexPath.row]
+        return task
     }
     
     private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
         let task = taskFor(indexPath: indexPath)
         var newTask = Task(id: task.id, name: task.name, description: task.description, remindDate: task.remindDate, priority: task.priority)
         newTask.completed = Date()
-        TaskService.shared.update(task: newTask)
+        let updated = TaskService.shared.update(task: newTask)
+        loadData(updatedCategory: updated)
         tableView.reloadData()
     }
     
@@ -79,7 +136,8 @@ class TodayTaskController: UIViewController {
         let task = taskFor(indexPath: indexPath)
         var newTask = Task(id: task.id, name: task.name, description: task.description, remindDate: task.remindDate, priority: task.priority)
         newTask.completed = nil
-        TaskService.shared.update(task: newTask)
+        let updated = TaskService.shared.update(task: newTask)
+        loadData(updatedCategory: updated)
         tableView.reloadData()
     }
     
@@ -94,6 +152,7 @@ class TodayTaskController: UIViewController {
         alertController.addAction(delete)
         present(alertController, animated: true, completion: nil)
     }
+    
     
 
 }
@@ -120,7 +179,8 @@ extension TodayTaskController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let task = taskFor(indexPath: indexPath)
-            TaskService.shared.remove(task: task)
+            let updated = TaskService.shared.remove(task: task)
+            loadData(updatedCategory: updated)
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
@@ -188,9 +248,9 @@ extension TodayTaskController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return TaskService.shared.pendingTasks().count
+            return pendingTasks.count
         case 1:
-            return TaskService.shared.completedTasks().count
+            return completedTasks.count
         default:
             fatalError("Unknown section \(section)")
         }
@@ -216,18 +276,15 @@ extension TodayTaskController: AddTaskSaveDelegate {
     
     
     func save(task: Task) {
-        TaskService.shared.add(task: task)
+        let updated = TaskService.shared.add(task: task, category: category)
+        loadData(updatedCategory: updated)
         tableView.reloadData()
     }
     
     func update(task: Task) {
-        TaskService.shared.update(task: task)
+        let updated = TaskService.shared.update(task: task)
+        loadData(updatedCategory: updated)
         tableView.reloadData()
     }
 }
 
-
-fileprivate struct Const {
-    static let sectionTitlePendingTasks = " "
-    static let sectionTitleCompletedTasks = "Completed"
-}

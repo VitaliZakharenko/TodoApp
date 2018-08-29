@@ -20,7 +20,7 @@ class AddCategoryController: UITableViewController {
         super.viewDidLoad()
         categoryNameTextField.delegate = self
         tableView.tableFooterView = UIView()
-        
+        setupSaveButton()
     }
     
     
