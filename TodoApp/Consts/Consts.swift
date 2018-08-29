@@ -27,6 +27,7 @@ struct Consts {
         static let cancel = "Cancel"
         static let delete = "Delete"
         static let back = "Back"
+        static let edit = "Edit"
         
         static let noDescriptionText = "No description"
         static let noReminderText = "No reminder"

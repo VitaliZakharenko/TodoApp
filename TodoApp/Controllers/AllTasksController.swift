@@ -8,6 +8,12 @@
 
 import UIKit
 
+fileprivate struct Const {
+    
+    static let deleteCategoryAlertMessage = "Are you sure you want to remove this item?"
+    static let editProjectAlertTitle = "Edit Project"
+}
+
 class AllTasksController: UIViewController {
     
     //MARK: - Properties
@@ -89,6 +95,41 @@ class AllTasksController: UIViewController {
         tasksController.category = category
         navigationController?.pushViewController(tasksController, animated: true)
     }
+    
+    
+    private func deleteCategory(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
+        let alertController = UIAlertController(title: Consts.Text.delete, message: Const.deleteCategoryAlertMessage, preferredStyle: .alert)
+        let cancel = UIAlertAction(title: Consts.Text.cancel, style: .cancel, handler: nil)
+        let delete = UIAlertAction(title: Consts.Text.delete, style: .destructive, handler: { (alertAction) -> Void in
+            self.tableView(self.tableView, commit: .delete, forRowAt: indexPath)
+        })
+        
+        alertController.addAction(cancel)
+        alertController.addAction(delete)
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    private func changeCategoryName(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
+        let alertController = UIAlertController(title: Const.editProjectAlertTitle, message: " ", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: Consts.Text.cancel, style: .cancel, handler: nil)
+        alertController.addAction(cancel)
+        alertController.addTextField(configurationHandler: nil)
+        let done = UIAlertAction(title: Consts.Text.done, style: .default, handler: { (alertAction) in
+            guard let textField = alertController.textFields?.first else { return }
+            self.newCategoryNameEntered(newName: textField.text!, for: indexPath)
+            })
+        alertController.addAction(done)
+        present(alertController, animated: true, completion: nil)
+        
+    }
+    
+    private func newCategoryNameEntered(newName: String, for indexPath: IndexPath){
+        var category = taskCategory(for: indexPath)
+        category.name = newName
+        TaskService.shared.update(category: category)
+        loadData()
+        tableView.reloadData()
+    }
 }
 
 
@@ -144,6 +185,13 @@ extension AllTasksController: UITableViewDelegate {
         let category = taskCategory(for: indexPath)
         showAllTasks(of: category)
         
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        
+        let deleteAction = UITableViewRowAction(style: .destructive, title: Consts.Text.delete, handler: self.deleteCategory)
+        let editAction = UITableViewRowAction(style: .normal, title: Consts.Text.edit, handler: self.changeCategoryName)
+        return [deleteAction, editAction]
     }
     
 }
