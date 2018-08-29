@@ -10,7 +10,6 @@ import Foundation
 
 struct Task {
     
-    // not used yet, empty string
     let id: String
     var name: String
     var description: String?

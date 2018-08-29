@@ -11,51 +11,170 @@ import Foundation
 class TaskService {
     
     static let shared = TaskService()
-
-  
-    private var tasks = [Task]()
+    
+    private var categories = [TaskCategory]()
+    private var inboxCategory: TaskCategory = TaskCategory(id: UUID().uuidString, name: "Inbox")
     
     
     init(){
-        tasks.append(contentsOf: predefinedTestTasks())
+        inboxCategory.add(tasks: predefinedTestTasks())
+        categories.append(contentsOf: predefinedCategories())
+    }
+    
+    func allCategories() -> [TaskCategory]{
+        var all = categories
+        all.append(inboxCategory)
+        return all
     }
     
     func completedTasks() -> [Task] {
-        return tasks.filter({ $0.isCompleted })
+        var tasks = [Task]()
+        tasks.append(contentsOf: inboxCategory.completedTasks())
+        for category in categories {
+            tasks.append(contentsOf: category.completedTasks())
+        }
+        return tasks
     }
     
     func pendingTasks() -> [Task] {
-        return tasks.filter({ !$0.isCompleted })
+        var tasks = [Task]()
+        tasks.append(contentsOf: inboxCategory.pendingTasks())
+        for category in categories {
+            tasks.append(contentsOf: category.pendingTasks())
+        }
+        return tasks
     }
     
-    func add(task: Task) {
-        if tasks.index(where: { $0.id == task.id }) != nil {
-            return
+    func tasksBy(predicate: ((Task) -> Bool)) -> [Task] {
+        return allTasks().filter(predicate)
+    }
+    
+    func allTasks() -> [Task] {
+        var tasks = [Task]()
+        tasks.append(contentsOf: inboxCategory.allTasks())
+        for category in categories {
+            tasks.append(contentsOf: category.allTasks())
+        }
+        return tasks
+    }
+    
+    func add(task: Task, category: TaskCategory? = nil) {
+        if let category = category {
+            for (idx, serviceCategory) in categories.enumerated() {
+                if serviceCategory.id == category.id {
+                    categories[idx].add(task: task)
+                }
+            }
         } else {
-            tasks.append(task)
+            inboxCategory.add(task: task)
         }
     }
     
     func remove(task: Task){
-        if let index = tasks.index(where: { $0.id == task.id }){
-
-            tasks.remove(at: index)
+        inboxCategory.remove(task: task)
+        for (idx, _) in categories.enumerated() {
+            categories[idx].remove(task: task)
         }
     }
     
     func update(task: Task){
-        if let index = tasks.index(where: { $0.id == task.id }){
-            tasks[index] = task
+        inboxCategory.update(task: task)
+        for (idx, _) in categories.enumerated(){
+            categories[idx].update(task: task)
         }
     }
     
     
     private func predefinedTestTasks() -> [Task] {
         let t1 = Task(id: UUID().uuidString, name: "First", description: nil, remindDate: Date())
-        let t2 = Task(id: UUID().uuidString, name: "Second", description: nil, remindDate: Date())
-        let t3 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date())
-        let t4 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date())
+        let t2 = Task(id: UUID().uuidString, name: "Second", description: nil, remindDate: nil)
+        let t3 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date(timeIntervalSinceNow: 86400))
+        let t4 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date(timeIntervalSinceNow: 86400 * 2))
+        var t5 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date())
+        t5.completed = Date()
+        let t6 = Task(id: UUID().uuidString, name: "TestTask6", description: nil, remindDate: Date())
+        let t7 = Task(id: UUID().uuidString, name: "TestTask7", description: nil, remindDate: Date())
         
-        return [t1, t2, t3, t4]
+        return [t1, t2, t3, t4, t5, t6, t7]
+    }
+    
+    private func predefinedCategories() -> [TaskCategory] {
+        var category1 = TaskCategory(id: UUID().uuidString, name: "Work")
+        let task1 = Task(id: UUID().uuidString, name: "WorkCategoryTask1", description: "Work", remindDate: Date())
+        let task2 = Task(id: UUID().uuidString, name: "WorkCategoryTask2", description: "WorkTask2", remindDate: nil)
+        category1.add(tasks: [task1, task2])
+        var category2 = TaskCategory(id: UUID().uuidString, name: "Blablabla")
+        let blabla1 = Task(id: UUID().uuidString, name: "Blabla1", description: nil, remindDate: Date())
+        let blabla2 = Task(id: UUID().uuidString, name: "Blabla2", description: "Blablabla", remindDate: Date())
+        category2.add(tasks: [blabla1, blabla2])
+        return [category1, category2]
     }
 }
+
+
+//MARK: - Grouping Tasks
+
+extension TaskService {
+    
+    
+    func groupedTasks(by sortOrder: InboxSorting) -> ([(String, [Task])], [Task]?) {
+        switch sortOrder {
+        case .byDate(ascend: _):
+            let withReminder = allTasks().filter({ $0.isReminded })
+            let withoutReminder = allTasks().filter({ !$0.isReminded })
+            let withoutGroup = withoutReminder
+            let groupedItems = groupByRemindDate(tasksWithReminder: withReminder)
+            return (groupedItems, withoutGroup)
+        case .byGroup(ascend: _):
+            let groupedItems = groupByCategory(categories: allCategories())
+            return (groupedItems, nil)
+        }
+    }
+    
+    private func group<T, K: Hashable>(items: [(K, T)], by comparator: ((K, K) -> Bool)) -> [K: [T]] {
+        var groupedItems: [K: [T]] = [K: [T]]()
+        
+        for (keyToGroup, item) in items {
+            if let index = groupedItems.keys.index(where: { comparator($0, keyToGroup) }) {
+                let key = groupedItems.keys[index]
+                groupedItems[key]!.append(item)
+            } else {
+                groupedItems[keyToGroup] = [item]
+            }
+        }
+        return groupedItems
+    }
+    
+    
+    private func groupByCategory(categories: [TaskCategory]) -> [(String, [Task])]{
+        var items = [(String, Task)]()
+        for category in categories {
+            for task in category.allTasks() {
+                let item = (category.name, task)
+                items.append(item)
+            }
+        }
+        return group(items: items, by: { $0 == $1 }).map({ (key, value) in (key, value) })
+    }
+    
+    
+    private func groupByRemindDate(tasksWithReminder: [Task]) -> [(String, [Task])] {
+        var items = [(Date, Task)]()
+        for task in tasksWithReminder {
+            let item = (task.remindDate!, task)
+            items.append(item)
+        }
+        
+        let grouped = group(items: items, by: { $0.compareByDayGranularity(other: $1)})
+        var result = [String: [Task]]()
+        for (key, value) in grouped {
+            result[key.formattedString()] = value
+        }
+        return grouped.map({ (key, value) in (key.formattedString(), value)})
+    }
+    
+    
+}
+
+
+
