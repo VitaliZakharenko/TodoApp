@@ -12,6 +12,12 @@ import UIKit
 fileprivate struct Const {
     
     static let searchBarPlaceholder = "Search Tasks"
+    static let attributedTextBackgroundColor = UIColor.fromHexString("#FFFF00", alpha: 0.8)
+    static let attributedTextForegrondColor = UIColor.black
+    static let attributesForTextHighlighting = [
+        NSAttributedStringKey.backgroundColor: Const.attributedTextBackgroundColor,
+        NSAttributedStringKey.foregroundColor: Const.attributedTextForegrondColor
+    ]
 }
 
 class SearchTaskListController: UIViewController {
@@ -59,6 +65,7 @@ class SearchTaskListController: UIViewController {
         if let filter = taskNameToSearch {
             tasksToShow = allTasksOfType.filter({ $0.name.lowercased().contains(filter.lowercased())})
         } else {
+            
             tasksToShow = allTasksOfType
         }
         
@@ -142,6 +149,7 @@ extension SearchTaskListController: UITableViewDataSource {
         
         let task = tasksToShow[indexPath.row]
         
+        cell.taskNameLabel.attributedText = task.name.highlight(substring: taskNameToSearch, attributes: Const.attributesForTextHighlighting, caseSensitive: false)
         cell.taskNameLabel.text = task.name
         cell.taskDescriptionLabel.text = task.description ?? Consts.Text.noDescriptionText
         cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Consts.Text.noReminderText
