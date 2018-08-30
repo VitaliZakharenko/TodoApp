@@ -124,19 +124,17 @@ class TodayTaskController: UIViewController {
     }
     
     private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
-        let task = taskFor(indexPath: indexPath)
-        var newTask = Task(id: task.id, name: task.name, description: task.description, remindDate: task.remindDate, priority: task.priority)
-        newTask.completed = Date()
-        let updated = TaskService.shared.update(task: newTask)
+        var task = taskFor(indexPath: indexPath)
+        task.completed = Date()
+        let updated = TaskService.shared.update(task: task)
         loadData(updatedCategory: updated)
         tableView.reloadData()
     }
     
     private func taskUndone(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
-        let task = taskFor(indexPath: indexPath)
-        var newTask = Task(id: task.id, name: task.name, description: task.description, remindDate: task.remindDate, priority: task.priority)
-        newTask.completed = nil
-        let updated = TaskService.shared.update(task: newTask)
+        var task = taskFor(indexPath: indexPath)
+        task.completed = nil
+        let updated = TaskService.shared.update(task: task)
         loadData(updatedCategory: updated)
         tableView.reloadData()
     }

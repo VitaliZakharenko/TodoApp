@@ -213,10 +213,10 @@ class AddTaskController: UITableViewController {
             fatalError("Add delegate is nil")
         }
         if let oldTask = editedTask {
-            let updatedTask = Task(id: oldTask.id, name: name, description: description, remindDate: remindDate, priority: taskPriority)
+            let updatedTask = TaskService.shared.createTask(oldTask: oldTask, name: name, description: description, remindDate: remindDate, priority: taskPriority)
             addDelegate.update(task: updatedTask)
         } else {
-            let newTask = Task(id: UUID().uuidString, name: name, description: description, remindDate: remindDate, priority: taskPriority)
+            let newTask = TaskService.shared.createTask(name: name, description: description, remindDate: remindDate, priority: taskPriority)
             addDelegate.save(task: newTask)
         }
         

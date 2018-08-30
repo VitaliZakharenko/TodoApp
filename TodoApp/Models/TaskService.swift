@@ -13,10 +13,11 @@ class TaskService {
     static let shared = TaskService()
     
     private var categories = [TaskCategory]()
-    private var inboxCategory: TaskCategory = TaskCategory(id: UUID().uuidString, name: Consts.Categories.inboxName)
+    private var inboxCategory: TaskCategory!
     
     
     init(){
+        inboxCategory = createCategory(name: Consts.Categories.inboxName)
         inboxCategory.add(tasks: predefinedTestTasks())
         categories.append(contentsOf: predefinedCategories())
     }
@@ -56,6 +57,16 @@ class TaskService {
             tasks.append(contentsOf: category.allTasks())
         }
         return tasks
+    }
+    
+    //MARK: - Tasks
+    
+    func createTask(name: String, description: String?, remindDate: Date?, priority: Priority = .none) -> Task {
+        return Task(id: UUID().uuidString, name: name, description: description, remindDate: remindDate, priority: priority)
+    }
+    
+    func createTask(oldTask: Task, name: String, description: String?, remindDate: Date?, priority: Priority = .none) -> Task {
+        return Task(id: oldTask.id, name: name, description: description, remindDate: remindDate, priority: priority)
     }
     
     @discardableResult
@@ -98,6 +109,14 @@ class TaskService {
     }
     
     
+    //MARK: - Categories
+    
+    
+    func createCategory(name: String) -> TaskCategory {
+        return TaskCategory(id: UUID().uuidString, name: name)
+    }
+    
+    
     func add(category: TaskCategory){
         if categories.index(where: { $0.id == category.id }) != nil {
             return
@@ -120,26 +139,26 @@ class TaskService {
     
     
     private func predefinedTestTasks() -> [Task] {
-        let t1 = Task(id: UUID().uuidString, name: "First", description: nil, remindDate: Date())
-        let t2 = Task(id: UUID().uuidString, name: "Second", description: nil, remindDate: nil)
-        let t3 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date(timeIntervalSinceNow: 86400))
-        let t4 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date(timeIntervalSinceNow: 86400 * 2))
-        var t5 = Task(id: UUID().uuidString, name: "TestTask", description: nil, remindDate: Date())
+        let t1 = createTask(name: "First", description: nil, remindDate: Date())
+        let t2 = createTask(name: "Second", description: nil, remindDate: nil)
+        let t3 = createTask(name: "TestTask", description: nil, remindDate: Date(timeIntervalSinceNow: 86400))
+        let t4 = createTask(name: "TestTask", description: nil, remindDate: Date(timeIntervalSinceNow: 86400 * 2))
+        var t5 = createTask(name: "TestTask", description: nil, remindDate: Date())
         t5.completed = Date()
-        let t6 = Task(id: UUID().uuidString, name: "TestTask6", description: nil, remindDate: Date())
-        let t7 = Task(id: UUID().uuidString, name: "TestTask7", description: nil, remindDate: Date())
+        let t6 = createTask(name: "TestTask6", description: nil, remindDate: Date())
+        let t7 = createTask(name: "TestTask7", description: nil, remindDate: Date())
         
         return [t1, t2, t3, t4, t5, t6, t7]
     }
     
     private func predefinedCategories() -> [TaskCategory] {
-        var category1 = TaskCategory(id: UUID().uuidString, name: "Work")
-        let task1 = Task(id: UUID().uuidString, name: "WorkCategoryTask1", description: "Work", remindDate: Date())
-        let task2 = Task(id: UUID().uuidString, name: "WorkCategoryTask2", description: "WorkTask2", remindDate: nil)
+        var category1 = createCategory(name: "Work")
+        let task1 = createTask(name: "WorkCategoryTask1", description: "Work", remindDate: Date())
+        let task2 = createTask(name: "WorkCategoryTask2", description: "WorkTask2", remindDate: nil)
         category1.add(tasks: [task1, task2])
-        var category2 = TaskCategory(id: UUID().uuidString, name: "Blablabla")
-        let blabla1 = Task(id: UUID().uuidString, name: "Blabla1", description: nil, remindDate: Date())
-        let blabla2 = Task(id: UUID().uuidString, name: "Blabla2", description: "Blablabla", remindDate: Date())
+        var category2 = createCategory(name: "Blablabla")
+        let blabla1 = createTask(name: "Blabla1", description: nil, remindDate: Date())
+        let blabla2 = createTask(name: "Blabla2", description: "Blablabla", remindDate: Date())
         category2.add(tasks: [blabla1, blabla2])
         return [category1, category2]
     }
