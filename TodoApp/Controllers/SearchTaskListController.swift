@@ -8,14 +8,26 @@
 
 import UIKit
 
+
+fileprivate struct Const {
+    
+    static let searchBarPlaceholder = "Search Tasks"
+}
+
 class SearchTaskListController: UIViewController {
     
     //MARK: - Properties
     
     @IBOutlet weak var tableView: UITableView!
     
+    let searchController = UISearchController(searchResultsController: nil)
+    
     private var showActiveTasks = true
+    private var allTasksOfType: [Task]!
+    private var taskNameToSearch: String?
     private var tasksToShow: [Task]!
+    
+    
     
     
     //MARK: - Lifecycle
@@ -24,6 +36,7 @@ class SearchTaskListController: UIViewController {
         super.viewDidLoad()
         loadData()
         configureTableView()
+        configureSearchController()
         
     }
     
@@ -38,10 +51,17 @@ class SearchTaskListController: UIViewController {
     
     private func loadData(){
         if showActiveTasks {
-            tasksToShow = TaskService.shared.pendingTasks()
+            allTasksOfType = TaskService.shared.pendingTasks()
         } else {
-            tasksToShow = TaskService.shared.completedTasks()
+            allTasksOfType = TaskService.shared.completedTasks()
         }
+        
+        if let filter = taskNameToSearch {
+            tasksToShow = allTasksOfType.filter({ $0.name.lowercased().contains(filter.lowercased())})
+        } else {
+            tasksToShow = allTasksOfType
+        }
+        
     }
     
     private func configureTableView(){
@@ -50,6 +70,22 @@ class SearchTaskListController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
+    }
+    
+    private func configureSearchController(){
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = Const.searchBarPlaceholder
+        searchController.searchBar.delegate = self
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
+    }
+    
+    
+    private func filterTasksFor(searchString: String){
+        taskNameToSearch = searchString
+        loadData()
+        tableView.reloadData()
     }
     
     //MARK: - Actions
@@ -85,9 +121,6 @@ extension SearchTaskListController: UITableViewDelegate {
         navigationController?.pushViewController(editTaskController, animated: true)
         
     }
-    
-    
-    
 }
 
 //MARK: - UITableViewDataSource
@@ -115,6 +148,27 @@ extension SearchTaskListController: UITableViewDataSource {
             
         return cell
         
+    }
+    
+}
+
+//MARK: - UISearchControllerDelegate
+
+extension SearchTaskListController: UISearchResultsUpdating {
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        filterTasksFor(searchString: searchController.searchBar.text!)
+    }
+}
+
+//MARK: - UISearchBarDelegate
+
+extension SearchTaskListController: UISearchBarDelegate {
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        taskNameToSearch = nil
+        loadData()
+        tableView.reloadData()
     }
     
 }
