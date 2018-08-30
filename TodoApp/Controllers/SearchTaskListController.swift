@@ -25,6 +25,7 @@ class SearchTaskListController: UIViewController {
     //MARK: - Properties
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var noResultView: UIView!
     
     let searchController = UISearchController(searchResultsController: nil)
     
@@ -32,6 +33,12 @@ class SearchTaskListController: UIViewController {
     private var allTasksOfType: [Task]!
     private var taskNameToSearch: String?
     private var tasksToShow: [Task]!
+    
+    private var noResult: Bool! {
+        didSet{
+            noResultView.isHidden = !noResult
+        }
+    }
     
     
     
@@ -65,9 +72,10 @@ class SearchTaskListController: UIViewController {
         if let filter = taskNameToSearch {
             tasksToShow = allTasksOfType.filter({ $0.name.lowercased().contains(filter.lowercased())})
         } else {
-            
             tasksToShow = allTasksOfType
         }
+        
+        noResult = tasksToShow.count == 0
         
     }
     
@@ -83,13 +91,12 @@ class SearchTaskListController: UIViewController {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = Const.searchBarPlaceholder
-        searchController.searchBar.delegate = self
         navigationItem.searchController = searchController
         definesPresentationContext = true
     }
     
     
-    private func filterTasksFor(searchString: String){
+    private func filterTasksFor(searchString: String?){
         taskNameToSearch = searchString
         loadData()
         tableView.reloadData()
@@ -165,20 +172,14 @@ extension SearchTaskListController: UITableViewDataSource {
 extension SearchTaskListController: UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
-        filterTasksFor(searchString: searchController.searchBar.text!)
+        if searchController.searchBar.text!.isEmpty{
+            filterTasksFor(searchString: nil)
+        } else {
+            filterTasksFor(searchString: searchController.searchBar.text)
+        }
+        
+        
     }
-}
-
-//MARK: - UISearchBarDelegate
-
-extension SearchTaskListController: UISearchBarDelegate {
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        taskNameToSearch = nil
-        loadData()
-        tableView.reloadData()
-    }
-    
 }
 
 
