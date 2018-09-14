@@ -15,11 +15,31 @@ class TaskService {
     private var categories = [TaskCategory]()
     private var inboxCategory: TaskCategory!
     
+    private var dataStorage: DataStorage
+    
     
     init(){
-        inboxCategory = createCategory(name: Consts.Categories.inboxName)
-        inboxCategory.add(tasks: predefinedTestTasks())
-        categories.append(contentsOf: predefinedCategories())
+        
+        dataStorage = FileDataStorage(filename: "AllTasks")
+        
+        var allCategories = dataStorage.allCategories()
+        if allCategories.isEmpty {
+            inboxCategory = createCategory(name: Consts.Categories.inboxName)
+            categories = predefinedCategories()
+            
+            dataStorage.add(category: inboxCategory)
+            for item in categories {
+                dataStorage.add(category: item)
+            }
+        } else {
+            guard let index = allCategories.index(where: {$0.name == Consts.Categories.inboxName }) else {
+                fatalError("Inbox category does not exist")
+            }
+            inboxCategory = allCategories[index]
+            allCategories.remove(at: index)
+            categories = allCategories
+        }
+        
     }
     
     func allCategories() -> [TaskCategory]{
@@ -75,12 +95,14 @@ class TaskService {
             for (idx, serviceCategory) in categories.enumerated() {
                 if serviceCategory.id == category.id {
                     categories[idx].add(task: task)
+                    dataStorage.update(category: categories[idx])
                     return categories[idx]
                 }
             }
             return nil
         } else {
             inboxCategory.add(task: task)
+            dataStorage.update(category: inboxCategory)
             return inboxCategory
         }
     }
@@ -90,6 +112,7 @@ class TaskService {
         inboxCategory.remove(task: task)
         for (idx, _) in categories.enumerated() {
             if(categories[idx].remove(task: task)){
+                dataStorage.update(category: categories[idx])
                 return categories[idx]
             }
         }
@@ -102,6 +125,7 @@ class TaskService {
         inboxCategory.update(task: task)
         for (idx, _) in categories.enumerated(){
             if(categories[idx].update(task: task)){
+                dataStorage.update(category: categories[idx])
                 return categories[idx]
             }
         }
@@ -122,18 +146,21 @@ class TaskService {
             return
         } else {
             categories.append(category)
+            dataStorage.add(category: category)
         }
     }
     
     func update(category: TaskCategory){
         if let index = categories.index(where: { $0.id == category.id }) {
             categories[index] = category
+            dataStorage.update(category: category)
         }
     }
     
     func remove(category: TaskCategory){
         if let index = categories.index(where: { $0.id == category.id }) {
             categories.remove(at: index)
+            dataStorage.remove(category: category)
         }
     }
     
