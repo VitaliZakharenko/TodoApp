@@ -89,8 +89,8 @@ class InboxTaskController: UIViewController {
     private func groupTasks(){
         switch sortOrder {
         case .byDate(ascend: _):
-            let withReminder = allTasks.filter({ $0.isReminded })
-            let withoutReminder = allTasks.filter({ !$0.isReminded })
+            let withReminder = allTasks.filter({ $0.remindDate != nil })
+            let withoutReminder = allTasks.filter({ $0.remindDate == nil })
             withoutGroup = (Const.noReminderSectionTitle, withoutReminder)
             groupedItems = groupByRemindDate(tasksWithReminder: withReminder)
         case .byGroup(ascend: _):
@@ -124,8 +124,8 @@ class InboxTaskController: UIViewController {
     private func groupByCategory(categories: [TaskCategory]) -> [(String, [Task])]{
         var items = [(String, Task)]()
         for category in categories {
-            for task in category.allTasks() {
-                let item = (category.name, task)
+            for task in category.tasks! {
+                let item = (category.name!, task as! Task)
                 items.append(item)
             }
         }
@@ -200,14 +200,14 @@ class InboxTaskController: UIViewController {
     }
     
     private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
-        var task = taskFor(indexPath: indexPath)
+        let task = taskFor(indexPath: indexPath)
         task.completed = Date()
         TaskService.shared.update(task: task)
         reloadData()
     }
     
     private func taskUndone(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
-        var task = taskFor(indexPath: indexPath)
+        let task = taskFor(indexPath: indexPath)
         task.completed = nil
         TaskService.shared.update(task: task)
         reloadData()
@@ -282,10 +282,10 @@ extension InboxTaskController: UITableViewDelegate {
         
         let task = taskFor(indexPath: indexPath)
         let doneOrUndoneAction: UITableViewRowAction = {
-            switch task.isCompleted {
-            case false:
+            switch task.remindDate {
+            case nil:
                 return UITableViewRowAction(style: .normal, title: Consts.Text.done, handler: self.taskDone)
-            case true:
+            case _:
                 return UITableViewRowAction(style: .normal, title: Consts.Text.undone, handler: self.taskUndone)
             }
         }()
@@ -362,7 +362,7 @@ extension InboxTaskController: UITableViewDataSource {
         let task = taskFor(indexPath: indexPath)
         
         cell.taskNameLabel.text = task.name
-        cell.taskDescriptionLabel.text = task.description ?? Consts.Text.noDescriptionText
+        cell.taskDescriptionLabel.text = task.taskDescription ?? Consts.Text.noDescriptionText
         cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Consts.Text.noReminderText
         return cell
     }

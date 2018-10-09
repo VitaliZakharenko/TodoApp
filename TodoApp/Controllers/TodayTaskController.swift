@@ -91,16 +91,12 @@ class TodayTaskController: UIViewController {
         tableView.tableFooterView = UIView()
     }
     
-    private func loadData(updatedCategory: TaskCategory? = nil){
+    private func loadData(){
         
-        if var category = category {
+        if let category = category {
             
-            if let updated = updatedCategory {
-                self.category = updated
-                category = updated
-            }
-            pendingTasks = category.pendingTasks()
-            completedTasks = category.completedTasks()
+            pendingTasks = TaskService.shared.pendingTasks(category: category)
+            completedTasks = TaskService.shared.completedTasks(category: category)
         } else {
             pendingTasks = TaskService.shared.pendingTasks()
             completedTasks = TaskService.shared.completedTasks()
@@ -124,18 +120,18 @@ class TodayTaskController: UIViewController {
     }
     
     private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
-        var task = taskFor(indexPath: indexPath)
+        let task = taskFor(indexPath: indexPath)
         task.completed = Date()
-        let updated = TaskService.shared.update(task: task)
-        loadData(updatedCategory: updated)
+        TaskService.shared.update(task: task)
+        loadData()
         tableView.reloadData()
     }
     
     private func taskUndone(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
-        var task = taskFor(indexPath: indexPath)
+        let task = taskFor(indexPath: indexPath)
         task.completed = nil
-        let updated = TaskService.shared.update(task: task)
-        loadData(updatedCategory: updated)
+        TaskService.shared.update(task: task)
+        loadData()
         tableView.reloadData()
     }
     
@@ -177,8 +173,8 @@ extension TodayTaskController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let task = taskFor(indexPath: indexPath)
-            let updated = TaskService.shared.remove(task: task)
-            loadData(updatedCategory: updated)
+            TaskService.shared.remove(task: task)
+            loadData()
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
@@ -261,7 +257,7 @@ extension TodayTaskController: UITableViewDataSource {
         let task = taskFor(indexPath: indexPath)
         
         cell.taskNameLabel.text = task.name
-        cell.taskDescriptionLabel.text = task.description ?? Consts.Text.noDescriptionText
+        cell.taskDescriptionLabel.text = task.taskDescription ?? Consts.Text.noDescriptionText
         cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Consts.Text.noReminderText
         return cell
     }
@@ -274,14 +270,14 @@ extension TodayTaskController: AddTaskSaveDelegate {
     
     
     func save(task: Task) {
-        let updated = TaskService.shared.add(task: task, category: category)
-        loadData(updatedCategory: updated)
+        TaskService.shared.add(task: task, category: category)
+        loadData()
         tableView.reloadData()
     }
     
     func update(task: Task) {
-        let updated = TaskService.shared.update(task: task)
-        loadData(updatedCategory: updated)
+        TaskService.shared.update(task: task)
+        loadData()
         tableView.reloadData()
     }
 }

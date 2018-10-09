@@ -124,7 +124,7 @@ class AllTasksController: UIViewController {
     }
     
     private func newCategoryNameEntered(newName: String, for indexPath: IndexPath){
-        var category = taskCategory(for: indexPath)
+        let category = taskCategory(for: indexPath)
         category.name = newName
         TaskService.shared.update(category: category)
         loadData()
@@ -227,7 +227,7 @@ extension AllTasksController: UITableViewDataSource {
             let currCategory = taskCategory(for: indexPath)
             
             cell.categoryNameLabel.text = currCategory.name
-            cell.numberOfTasksLabel.text = "(\(currCategory.allTasks().count))"
+            cell.numberOfTasksLabel.text = "(\(currCategory.tasks!.count))"
             
             return cell
         }
