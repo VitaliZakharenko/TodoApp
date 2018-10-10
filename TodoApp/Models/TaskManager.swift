@@ -87,6 +87,13 @@ class TaskManager {
                     try managedObjectContext.save()
                 } else {
                     self.categories = categoriesSet
+                    
+                    if let index = categoriesSet.index(where: { $0.name == Consts.Categories.inboxName }){
+                        inboxCategory = categories[index]
+                    } else {
+                        fatalError("Inbox category not found")
+                    }
+                    
                 }
             } catch {
                 fatalError("Unable to execute fetch request or save data: \(error.localizedDescription)")

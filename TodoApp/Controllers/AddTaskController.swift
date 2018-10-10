@@ -220,6 +220,7 @@ class AddTaskController: UITableViewController {
             addDelegate.update(task: updatedTask)
         } else {
             let newTask = TaskManager.shared.createTask(name: name, description: description, remindDate: remindDate, priority: taskPriority)
+            
             addDelegate.save(task: newTask)
         }
         
