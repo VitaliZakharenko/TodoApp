@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum Priority: String {
+enum Priority: String, Codable {
     case none = "None"
     case low = "Low"
     case medium = "Medium"

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F827E21221388FA600E7EE00 /* DataStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F827E21121388FA600E7EE00 /* DataStorage.swift */; };
+		F827E2152138931300E7EE00 /* FileDataStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F827E2142138931300E7EE00 /* FileDataStorage.swift */; };
 		F830267F211C4361007638FD /* AddTaskSaveDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F830267E211C4361007638FD /* AddTaskSaveDelegate.swift */; };
 		F83316FE2138075F007FA60B /* String+NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83316FD2138075F007FA60B /* String+NSAttributedString.swift */; };
 		F8362DE52126B9C0009699DA /* InboxSorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8362DE42126B9C0009699DA /* InboxSorting.swift */; };
@@ -31,7 +33,7 @@
 		F87F54EB21108E2E00ED206E /* TodoAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87F54EA21108E2E00ED206E /* TodoAppUITests.swift */; };
 		F87F54F921109C4D00ED206E /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87F54F821109C4D00ED206E /* Task.swift */; };
 		F87F54FB21109DA300ED206E /* TaskCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87F54FA21109DA300ED206E /* TaskCategory.swift */; };
-		F87F54FD21109FBE00ED206E /* TaskService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87F54FC21109FBE00ED206E /* TaskService.swift */; };
+		F87F54FD21109FBE00ED206E /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87F54FC21109FBE00ED206E /* TaskManager.swift */; };
 		F8C218762137397B004C2397 /* SearchTaskListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C218752137397B004C2397 /* SearchTaskListController.swift */; };
 		F8DBB60E2125AFC2003DE156 /* InboxTaskController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DBB60D2125AFC2003DE156 /* InboxTaskController.swift */; };
 		F8DBB6102125C65E003DE156 /* Date+Comparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DBB60F2125C65E003DE156 /* Date+Comparison.swift */; };
@@ -62,6 +64,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F827E21121388FA600E7EE00 /* DataStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStorage.swift; sourceTree = "<group>"; };
+		F827E2142138931300E7EE00 /* FileDataStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDataStorage.swift; sourceTree = "<group>"; };
 		F830267E211C4361007638FD /* AddTaskSaveDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskSaveDelegate.swift; sourceTree = "<group>"; };
 		F83316FD2138075F007FA60B /* String+NSAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+NSAttributedString.swift"; sourceTree = "<group>"; };
 		F8362DE42126B9C0009699DA /* InboxSorting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxSorting.swift; sourceTree = "<group>"; };
@@ -92,7 +96,7 @@
 		F87F54EC21108E2E00ED206E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F87F54F821109C4D00ED206E /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		F87F54FA21109DA300ED206E /* TaskCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCategory.swift; sourceTree = "<group>"; };
-		F87F54FC21109FBE00ED206E /* TaskService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskService.swift; sourceTree = "<group>"; };
+		F87F54FC21109FBE00ED206E /* TaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManager.swift; sourceTree = "<group>"; };
 		F8C218752137397B004C2397 /* SearchTaskListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTaskListController.swift; sourceTree = "<group>"; };
 		F8DBB60D2125AFC2003DE156 /* InboxTaskController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxTaskController.swift; sourceTree = "<group>"; };
 		F8DBB60F2125C65E003DE156 /* Date+Comparison.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Comparison.swift"; sourceTree = "<group>"; };
@@ -130,12 +134,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F827E213213890FE00E7EE00 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				F827E2142138931300E7EE00 /* FileDataStorage.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
 		F830267D211C4334007638FD /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
 				F830267E211C4361007638FD /* AddTaskSaveDelegate.swift */,
 				F838DE30211F93BB000F49CD /* SelectDateDelegate.swift */,
 				F8EFD81F21342F3F00954753 /* AddCategoryDelegate.swift */,
+				F827E21121388FA600E7EE00 /* DataStorage.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -173,7 +186,7 @@
 			children = (
 				F87F54F821109C4D00ED206E /* Task.swift */,
 				F87F54FA21109DA300ED206E /* TaskCategory.swift */,
-				F87F54FC21109FBE00ED206E /* TaskService.swift */,
+				F87F54FC21109FBE00ED206E /* TaskManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -245,6 +258,7 @@
 				F87526232112280A0088E746 /* Models */,
 				F87F54CA21108E2E00ED206E /* AppDelegate.swift */,
 				F830267D211C4334007638FD /* Protocols */,
+				F827E213213890FE00E7EE00 /* Persistence */,
 				F85B2FC72112344D0009177B /* Extensions */,
 				F8BE48AD211C7C7F00157C6B /* Storyboards */,
 				F838EFE2211D8FB900D6225E /* Enums */,
@@ -420,7 +434,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F87F54FD21109FBE00ED206E /* TaskService.swift in Sources */,
+				F87F54FD21109FBE00ED206E /* TaskManager.swift in Sources */,
 				F838DE2F211F21EF000F49CD /* SelectDateController.swift in Sources */,
 				F8EFD814213414D200954753 /* AllTasksController.swift in Sources */,
 				F830267F211C4361007638FD /* AddTaskSaveDelegate.swift in Sources */,
@@ -436,6 +450,7 @@
 				F87F54F921109C4D00ED206E /* Task.swift in Sources */,
 				F8C218762137397B004C2397 /* SearchTaskListController.swift in Sources */,
 				F85B2FC621122F7E0009177B /* Consts.swift in Sources */,
+				F827E21221388FA600E7EE00 /* DataStorage.swift in Sources */,
 				F87526282112286D0088E746 /* TaskCell.swift in Sources */,
 				F8DBB60E2125AFC2003DE156 /* InboxTaskController.swift in Sources */,
 				F83316FE2138075F007FA60B /* String+NSAttributedString.swift in Sources */,
@@ -443,6 +458,7 @@
 				F87F54CB21108E2E00ED206E /* AppDelegate.swift in Sources */,
 				F838EFE4211D8FDB00D6225E /* Priority.swift in Sources */,
 				F85DCB9C2121AB510001C547 /* UIColor+String.swift in Sources */,
+				F827E2152138931300E7EE00 /* FileDataStorage.swift in Sources */,
 				F8EFD8182134174D00954753 /* CategoryCell.swift in Sources */,
 				F8EFD81E21342EAD00954753 /* AddCategoryController.swift in Sources */,
 			);

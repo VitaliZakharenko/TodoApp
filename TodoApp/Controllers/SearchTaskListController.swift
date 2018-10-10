@@ -60,13 +60,33 @@ class SearchTaskListController: UIViewController {
     }
     
     
-    //MARK: - Private Methods
+    
+    //MARK: - Actions
+    
+    
+    @IBAction func segmentedControlItemChanged(_ sender: UISegmentedControl) {
+        if sender.selectedSegmentIndex == 0 {
+            showActiveTasks = true
+        } else {
+            showActiveTasks = false
+        }
+        loadData()
+        tableView.reloadData()
+    }
+    
+
+}
+
+//MARK: - Private helper methods
+
+fileprivate extension SearchTaskListController {
+    
     
     private func loadData(){
         if showActiveTasks {
-            allTasksOfType = TaskService.shared.pendingTasks()
+            allTasksOfType = TaskManager.shared.pendingTasks()
         } else {
-            allTasksOfType = TaskService.shared.completedTasks()
+            allTasksOfType = TaskManager.shared.completedTasks()
         }
         
         if let filter = taskNameToSearch {
@@ -102,20 +122,13 @@ class SearchTaskListController: UIViewController {
         tableView.reloadData()
     }
     
-    //MARK: - Actions
-    
-    
-    @IBAction func segmentedControlItemChanged(_ sender: UISegmentedControl) {
-        if sender.selectedSegmentIndex == 0 {
-            showActiveTasks = true
-        } else {
-            showActiveTasks = false
-        }
-        loadData()
-        tableView.reloadData()
+    private func configure(cell: TaskCell, task: Task) -> TaskCell {
+        cell.taskNameLabel.attributedText = task.name.highlight(substring: taskNameToSearch, attributes: Const.attributesForTextHighlighting, caseSensitive: false)
+        cell.taskNameLabel.text = task.name
+        cell.taskDescriptionLabel.text = task.description ?? Consts.Text.noDescriptionText
+        cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Consts.Text.noReminderText
+        return cell
     }
-    
-
 }
 
 //MARK: - UITableViewDelegate
@@ -152,16 +165,8 @@ extension SearchTaskListController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = self.tableView.dequeueReusableCell(withIdentifier: Consts.Identifiers.taskCell, for: indexPath) as! TaskCell
-        
-        
         let task = tasksToShow[indexPath.row]
-        
-        cell.taskNameLabel.attributedText = task.name.highlight(substring: taskNameToSearch, attributes: Const.attributesForTextHighlighting, caseSensitive: false)
-        cell.taskNameLabel.text = task.name
-        cell.taskDescriptionLabel.text = task.description ?? Consts.Text.noDescriptionText
-        cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Consts.Text.noReminderText
-            
-        return cell
+        return configure(cell: cell, task: task)
         
     }
     
@@ -193,7 +198,7 @@ extension SearchTaskListController: AddTaskSaveDelegate {
     }
     
     func update(task: Task) {
-        TaskService.shared.update(task: task)
+        TaskManager.shared.update(task: task)
         loadData()
         tableView.reloadData()
     }
