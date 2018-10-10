@@ -21,7 +21,6 @@ class InboxTaskController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     
-    
     private var sortOrder: InboxSorting = .byDate(ascend: true)
     
     
@@ -70,7 +69,36 @@ class InboxTaskController: UIViewController {
     }
     
     
-    //MARK: - Private Methods
+    
+    //MARK: - Actions
+    
+    
+    @IBAction func sortOrderChanged(_ sender: UIBarButtonItem) {
+        changeSortOrder()
+        sortTasks(by: sortOrder)
+        tableView.reloadData()
+    }
+    
+    
+    @IBAction func sortCateoryInSegmentedControlChanged(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            sortOrder = .byDate(ascend: true)
+        case 1:
+            sortOrder = .byGroup(ascend: true)
+        default:
+            fatalError("Unknown index \(sender.selectedSegmentIndex) in segmented control")
+        }
+        reloadData()
+    }
+    
+
+}
+
+
+//MARK: - Private Helper Methods
+
+fileprivate extension InboxTaskController {
     
     
     private func configureTableView(){
@@ -224,30 +252,13 @@ class InboxTaskController: UIViewController {
         present(alertController, animated: true, completion: nil)
     }
     
-    
-    //MARK: - Actions
-    
-    
-    @IBAction func sortOrderChanged(_ sender: UIBarButtonItem) {
-        changeSortOrder()
-        sortTasks(by: sortOrder)
-        tableView.reloadData()
+    private func configure(cell: TaskCell, task: Task) -> TaskCell {
+        cell.taskNameLabel.text = task.name
+        cell.taskDescriptionLabel.text = task.description ?? Consts.Text.noDescriptionText
+        cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Consts.Text.noReminderText
+        return cell
     }
     
-    
-    @IBAction func sortCateoryInSegmentedControlChanged(_ sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            sortOrder = .byDate(ascend: true)
-        case 1:
-            sortOrder = .byGroup(ascend: true)
-        default:
-            fatalError("Unknown index \(sender.selectedSegmentIndex) in segmented control")
-        }
-        reloadData()
-    }
-    
-
 }
 
 //MARK: - UITableViewDelegate
@@ -300,7 +311,7 @@ extension InboxTaskController: UITableViewDelegate {
             if section == (numberOfSections(in: tableView) - 1) {
                 return withoutGroup.0
             } else {
-                let sectionDate =  groupedItems[section].0 //groupedTasksWithReminder[section][0].remindDate!
+                let sectionDate =  groupedItems[section].0
                 return sectionDate
             }
         
@@ -356,15 +367,9 @@ extension InboxTaskController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let cell = self.tableView.dequeueReusableCell(withIdentifier: Consts.Identifiers.taskCell, for: indexPath) as! TaskCell
-        
         let task = taskFor(indexPath: indexPath)
-        
-        cell.taskNameLabel.text = task.name
-        cell.taskDescriptionLabel.text = task.description ?? Consts.Text.noDescriptionText
-        cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Consts.Text.noReminderText
-        return cell
+        return configure(cell: cell, task: task)
     }
 }
 

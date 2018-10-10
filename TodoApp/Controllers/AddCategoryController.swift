@@ -71,8 +71,6 @@ class AddCategoryController: UITableViewController {
     }
     
     
-
-
 }
 
 //MARK: - UITextFieldDelegate

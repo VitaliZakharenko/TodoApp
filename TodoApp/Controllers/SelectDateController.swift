@@ -8,6 +8,11 @@
 
 import UIKit
 
+
+fileprivate struct Const {
+    static let navbarTitle = "Choose Date"
+}
+
 class SelectDateController: UIViewController {
     
     
@@ -45,6 +50,8 @@ class SelectDateController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: Consts.Text.done, style: .plain, target: self, action: #selector(doneButtonClicked(_:)))
     }
     
+    //MARK: - Callbacks
+    
     @objc private func backButtonClicked(_ sender: UIBarButtonItem){
         navigationController?.popViewController(animated: true)
     }
@@ -68,6 +75,4 @@ class SelectDateController: UIViewController {
     
 }
 
-fileprivate struct Const {
-    static let navbarTitle = "Choose Date"
-}
+
