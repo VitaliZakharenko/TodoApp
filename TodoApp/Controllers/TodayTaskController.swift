@@ -105,8 +105,8 @@ fileprivate extension TodayTaskController {
             pendingTasks = category.pendingTasks()
             completedTasks = category.completedTasks()
         } else {
-            pendingTasks = TaskService.shared.pendingTasks()
-            completedTasks = TaskService.shared.completedTasks()
+            pendingTasks = TaskManager.shared.pendingTasks()
+            completedTasks = TaskManager.shared.completedTasks()
         }
     }
     
@@ -129,7 +129,7 @@ fileprivate extension TodayTaskController {
     private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
         var task = taskFor(indexPath: indexPath)
         task.completed = Date()
-        let updated = TaskService.shared.update(task: task)
+        let updated = TaskManager.shared.update(task: task)
         loadData(updatedCategory: updated)
         tableView.reloadData()
     }
@@ -137,7 +137,7 @@ fileprivate extension TodayTaskController {
     private func taskUndone(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
         var task = taskFor(indexPath: indexPath)
         task.completed = nil
-        let updated = TaskService.shared.update(task: task)
+        let updated = TaskManager.shared.update(task: task)
         loadData(updatedCategory: updated)
         tableView.reloadData()
     }
@@ -186,7 +186,7 @@ extension TodayTaskController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let task = taskFor(indexPath: indexPath)
-            let updated = TaskService.shared.remove(task: task)
+            let updated = TaskManager.shared.remove(task: task)
             loadData(updatedCategory: updated)
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
@@ -277,13 +277,13 @@ extension TodayTaskController: AddTaskSaveDelegate {
     
     
     func save(task: Task) {
-        let updated = TaskService.shared.add(task: task, category: category)
+        let updated = TaskManager.shared.add(task: task, category: category)
         loadData(updatedCategory: updated)
         tableView.reloadData()
     }
     
     func update(task: Task) {
-        let updated = TaskService.shared.update(task: task)
+        let updated = TaskManager.shared.update(task: task)
         loadData(updatedCategory: updated)
         tableView.reloadData()
     }

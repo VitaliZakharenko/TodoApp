@@ -74,7 +74,7 @@ fileprivate extension AllTasksController {
     
     
     private func loadData(){
-        let allCategories = TaskService.shared.allCategories()
+        let allCategories = TaskManager.shared.allCategories()
         otherCategories = allCategories.filter({ $0.name != Consts.Categories.inboxName })
         inboxCategory = allCategories.first(where: { $0.name == Consts.Categories.inboxName})!
     }
@@ -134,7 +134,7 @@ fileprivate extension AllTasksController {
     private func newCategoryNameEntered(newName: String, for indexPath: IndexPath){
         var category = taskCategory(for: indexPath)
         category.name = newName
-        TaskService.shared.update(category: category)
+        TaskManager.shared.update(category: category)
         loadData()
         tableView.reloadData()
     }
@@ -180,7 +180,7 @@ extension AllTasksController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let category = taskCategory(for: indexPath)
-            TaskService.shared.remove(category: category)
+            TaskManager.shared.remove(category: category)
             loadData()
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
@@ -249,7 +249,7 @@ extension AllTasksController: UITableViewDataSource {
 extension AllTasksController: AddCategoryDelegate {
     
     func add(category: TaskCategory) {
-        TaskService.shared.add(category: category)
+        TaskManager.shared.add(category: category)
         loadData()
         tableView.reloadData()
     }

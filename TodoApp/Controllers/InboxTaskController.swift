@@ -21,16 +21,17 @@ class InboxTaskController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     
-    private var sortOrder: InboxSorting = .byDate(ascend: true)
+    private var sortOrder: InboxSorting = .byDate(ascend: true) {
+        didSet {
+            loadGroupedData()
+            sortTasks(by: sortOrder)
+            tableView.reloadData()
+        }
+    }
     
-    
-    
-    private var allTasks: [Task]!
-    private var allCategories: [TaskCategory]!
     
     private var groupedItems: [(String, [Task])]!
-    private var withoutGroup: (String, [Task])!
-    
+    private var withoutGroup: [Task]?
     
     
     private var sectionDateFormatter: DateFormatter = {
@@ -45,9 +46,8 @@ class InboxTaskController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = editButtonItem
-        loadData()
-        groupTasks()
-        sortTasks(by: sortOrder)
+        loadGroupedData()
+        sortOrder = .byDate(ascend: true)
         configureTableView()
         tableView.reloadData()
     }
@@ -89,7 +89,6 @@ class InboxTaskController: UIViewController {
         default:
             fatalError("Unknown index \(sender.selectedSegmentIndex) in segmented control")
         }
-        reloadData()
     }
     
 
@@ -109,103 +108,52 @@ fileprivate extension InboxTaskController {
         tableView.delegate = self
     }
     
-    private func loadData(){
-        allTasks = TaskService.shared.allTasks()
-        allCategories = TaskService.shared.allCategories()
+    private func loadGroupedData(){
+        let (grouped, noGroup) = TaskManager.shared.groupedTasks(by: sortOrder)
+        groupedItems = grouped
+        withoutGroup = noGroup
     }
     
-    private func groupTasks(){
-        switch sortOrder {
-        case .byDate(ascend: _):
-            let withReminder = allTasks.filter({ $0.isReminded })
-            let withoutReminder = allTasks.filter({ !$0.isReminded })
-            withoutGroup = (Const.noReminderSectionTitle, withoutReminder)
-            groupedItems = groupByRemindDate(tasksWithReminder: withReminder)
-        case .byGroup(ascend: _):
-            groupedItems = groupByCategory(categories: allCategories)
-        }
-    }
     
     private func reloadData(){
-        loadData()
-        groupTasks()
+        loadGroupedData()
         sortTasks(by: sortOrder)
         tableView.reloadData()
     }
     
     
-    private func group<T, K: Hashable>(items: [(K, T)], by comparator: ((K, K) -> Bool)) -> [K: [T]] {
-        var groupedItems: [K: [T]] = [K: [T]]()
-        
-        for (keyToGroup, item) in items {
-            if let index = groupedItems.keys.index(where: { comparator($0, keyToGroup) }) {
-                let key = groupedItems.keys[index]
-                groupedItems[key]!.append(item)
-            } else {
-                groupedItems[keyToGroup] = [item]
-            }
-        }
-        return groupedItems
-    }
-    
-    
-    private func groupByCategory(categories: [TaskCategory]) -> [(String, [Task])]{
-        var items = [(String, Task)]()
-        for category in categories {
-            for task in category.allTasks() {
-                let item = (category.name, task)
-                items.append(item)
-            }
-        }
-        return group(items: items, by: { $0 == $1 }).map({ (key, value) in (key, value) })
-    }
-    
-    
-    private func groupByRemindDate(tasksWithReminder: [Task]) -> [(String, [Task])] {
-        var items = [(Date, Task)]()
-        for task in tasksWithReminder {
-            let item = (task.remindDate!, task)
-            items.append(item)
-        }
-        
-        let grouped = group(items: items, by: { $0.compareByDayGranularity(other: $1)})
-        var result = [String: [Task]]()
-        for (key, value) in grouped {
-            result[key.formattedString()] = value
-        }
-        return grouped.map({ (key, value) in (key.formattedString(), value)})
-    }
-    
     
     private func taskFor(indexPath: IndexPath) -> Task {
-        switch sortOrder {
-        case .byDate(_):
-            if indexPath.section == (numberOfSections(in: tableView) - 1) {
-                return withoutGroup.1[indexPath.row]
-            } else {
-                return groupedItems[indexPath.section].1[indexPath.row]
-            }
-        case .byGroup(_):
+        
+        if let withoutGroup = withoutGroup, indexPath.section == (numberOfSections(in: tableView) - 1) {
+            return withoutGroup[indexPath.row]
+        } else {
             return groupedItems[indexPath.section].1[indexPath.row]
         }
     }
     
     private func sortTasks(by sortOrder: InboxSorting) {
         switch sortOrder {
-        case .byDate(let ascend) where ascend == true:
-            groupedItems.sort(by: {(group, otherGroup) in group.0.toDate() < otherGroup.0.toDate() })
+        case .byDate(let ascend):
+            if ascend {
+                groupedItems.sort(by: {(group, otherGroup) in group.0.toDate() < otherGroup.0.toDate() })
+            } else {
+                groupedItems.sort(by: {(group, otherGroup) in group.0.toDate() >= otherGroup.0.toDate() })
+            }
+            
             for (idx, group) in groupedItems.enumerated() {
                 let (dateString, tasks) = group
-                let sortedTasks = tasks.sorted(by: {$0.remindDate! < $1.remindDate!})
+                let sortedTasks: [Task] = {
+                    if ascend {
+                        return tasks.sorted(by: {$0.remindDate! < $1.remindDate!})
+                    } else {
+                        return tasks.sorted(by: {$0.remindDate! >= $1.remindDate!})
+                    }
+                }()
+                
                 groupedItems[idx] = (dateString, sortedTasks)
             }
-        case .byDate(let ascend) where ascend == false:
-            groupedItems.sort(by: {(group, otherGroup) in group.0.toDate() >= otherGroup.0.toDate() })
-            for (idx, group) in groupedItems.enumerated() {
-                let (dateString, tasks) = group
-                let sortedTasks = tasks.sorted(by: {$0.remindDate! >= $1.remindDate!})
-                groupedItems[idx] = (dateString, sortedTasks)
-            }
+            
         case .byGroup(let ascend):
             
             if ascend {
@@ -213,11 +161,7 @@ fileprivate extension InboxTaskController {
             } else {
                 groupedItems.sort(by: { (group, otherGroup) in group.0 >= otherGroup.0 })
             }
-            
-        default:
-            fatalError("Unknown sorting \(sortOrder)")
         }
-        
     }
     
     private func changeSortOrder(){
@@ -230,14 +174,14 @@ fileprivate extension InboxTaskController {
     private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
         var task = taskFor(indexPath: indexPath)
         task.completed = Date()
-        TaskService.shared.update(task: task)
+        TaskManager.shared.update(task: task)
         reloadData()
     }
     
     private func taskUndone(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
         var task = taskFor(indexPath: indexPath)
         task.completed = nil
-        TaskService.shared.update(task: task)
+        TaskManager.shared.update(task: task)
         reloadData()
     }
     
@@ -268,7 +212,7 @@ extension InboxTaskController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let task = taskFor(indexPath: indexPath)
-            TaskService.shared.remove(task: task)
+            TaskManager.shared.remove(task: task)
             reloadData()
         }
     }
@@ -308,13 +252,13 @@ extension InboxTaskController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch sortOrder {
         case .byDate(_):
-            if section == (numberOfSections(in: tableView) - 1) {
-                return withoutGroup.0
+            if withoutGroup != nil && section == (numberOfSections(in: tableView) - 1) {
+                return Const.noReminderSectionTitle
             } else {
                 let sectionDate =  groupedItems[section].0
                 return sectionDate
             }
-        
+            
         case .byGroup(_):
             return groupedItems[section].0
         }
@@ -342,28 +286,20 @@ extension InboxTaskController: UITableViewDelegate {
 extension InboxTaskController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        switch sortOrder {
-        case .byDate(_):
+        if withoutGroup != nil {
             return groupedItems.count + 1
-        case .byGroup(_):
+        } else {
             return groupedItems.count
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        switch sortOrder {
-        case .byDate(_):
-            if section == (numberOfSections(in: tableView) - 1){
-                return withoutGroup.1.count
-            } else {
-                return groupedItems[section].1.count
-            }
-        
-        case .byGroup(_):
+        if let withoutGroup = withoutGroup, section == (numberOfSections(in: tableView) - 1) {
+            return withoutGroup.count
+        } else {
             return groupedItems[section].1.count
         }
-        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -377,12 +313,12 @@ extension InboxTaskController: UITableViewDataSource {
 
 extension InboxTaskController: AddTaskSaveDelegate {
     func save(task: Task) {
-        TaskService.shared.add(task: task)
+        TaskManager.shared.add(task: task)
         reloadData()
     }
     
     func update(task: Task) {
-        TaskService.shared.update(task: task)
+        TaskManager.shared.update(task: task)
         reloadData()
     }
     
