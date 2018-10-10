@@ -16,10 +16,10 @@ fileprivate struct Const {
     
 }
 
-class TaskService {
+class TaskManager {
     
     
-    static var shared: TaskService!
+    static var shared: TaskManager!
     
     
     //MARK: CoreData Stack
@@ -187,16 +187,24 @@ class TaskService {
     }
     
     
-    func remove(task: Task) {
-        for category in categories {
-            let tasks = category.tasks!.allObjects as! [Task]
-            if let index = tasks.index(where: { $0.objectID == task.objectID }){
-                category.removeFromTasks(tasks[index])
-            }
+    func remove(task: Task, from category: TaskCategory? = nil) {
+        if let category = category {
+            remove(task: task, fromCategory: category)
         }
-        
+        else {
+            for category in categories {
+                remove(task: task, fromCategory: category)
+        }
         managedObjectContext.delete(task)
         saveCoreDataChanges()
+        }
+    }
+    
+    private func remove(task: Task, fromCategory category: TaskCategory){
+        let tasks = category.tasks!.allObjects as! [Task]
+        if let index = tasks.index(where: { $0.objectID == task.objectID }){
+            category.removeFromTasks(tasks[index])
+        }
     }
     
     
@@ -239,6 +247,8 @@ class TaskService {
         }
     }
     
+    //MARK: - Grouping
+    
     
     //MARK: - Methods to create test data
     
@@ -267,3 +277,69 @@ class TaskService {
         return [category1, category2]
     }
 }
+
+
+//MARK: - Grouping Tasks
+extension TaskManager {
+    
+    
+    func groupedTasks(by sortOrder: InboxSorting) -> ([(String, [Task])], [Task]?) {
+        switch sortOrder {
+        case .byDate(ascend: _):
+            let withReminder = allTasks().filter({ $0.remindDate != nil })
+            let withoutReminder = allTasks().filter({ $0.remindDate == nil })
+            let withoutGroup = withoutReminder
+            let groupedItems = groupByRemindDate(tasksWithReminder: withReminder)
+            return (groupedItems, withoutGroup)
+        case .byGroup(ascend: _):
+            let groupedItems = groupByCategory(categories: allCategories())
+            return (groupedItems, nil)
+        }
+    }
+    
+    private func group<T, K: Hashable>(items: [(K, T)], by comparator: ((K, K) -> Bool)) -> [K: [T]] {
+        var groupedItems: [K: [T]] = [K: [T]]()
+        
+        for (keyToGroup, item) in items {
+            if let index = groupedItems.keys.index(where: { comparator($0, keyToGroup) }) {
+                let key = groupedItems.keys[index]
+                groupedItems[key]!.append(item)
+            } else {
+                groupedItems[keyToGroup] = [item]
+            }
+        }
+        return groupedItems
+    }
+    
+    
+    private func groupByCategory(categories: [TaskCategory]) -> [(String, [Task])]{
+        var items = [(String, Task)]()
+        for category in categories {
+            let tasks = category.tasks!.allObjects as! [Task]
+            for task in tasks {
+                let item = (category.name!, task)
+                items.append(item)
+            }
+        }
+        return group(items: items, by: { $0 == $1 }).map({ (key, value) in (key, value) })
+    }
+    
+    
+    private func groupByRemindDate(tasksWithReminder: [Task]) -> [(String, [Task])] {
+        var items = [(Date, Task)]()
+        for task in tasksWithReminder {
+            let item = (task.remindDate!, task)
+            items.append(item)
+        }
+        
+        let grouped = group(items: items, by: { $0.compareByDayGranularity(other: $1)})
+        var result = [String: [Task]]()
+        for (key, value) in grouped {
+            result[key.formattedString()] = value
+        }
+        return grouped.map({ (key, value) in (key.formattedString(), value)})
+    }
+    
+    
+}
+

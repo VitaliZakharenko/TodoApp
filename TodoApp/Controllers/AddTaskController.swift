@@ -219,7 +219,7 @@ class AddTaskController: UITableViewController {
             updatedTask.priority = taskPriority.rawValue
             addDelegate.update(task: updatedTask)
         } else {
-            let newTask = TaskService.shared.createTask(name: name, description: description, remindDate: remindDate, priority: taskPriority)
+            let newTask = TaskManager.shared.createTask(name: name, description: description, remindDate: remindDate, priority: taskPriority)
             addDelegate.save(task: newTask)
         }
         

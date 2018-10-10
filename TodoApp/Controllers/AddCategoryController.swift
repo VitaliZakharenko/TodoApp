@@ -60,7 +60,7 @@ class AddCategoryController: UITableViewController {
         guard let name = categoryNameTextField.text else {
             fatalError("Category Name is nil")
         }
-        let category = TaskService.shared.createCategory(name: name)
+        let category = TaskManager.shared.createCategory(name: name)
         addCategoryDelegate.add(category: category)
         navigationController?.popViewController(animated: true)
     }

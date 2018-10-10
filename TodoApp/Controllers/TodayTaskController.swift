@@ -95,11 +95,11 @@ class TodayTaskController: UIViewController {
         
         if let category = category {
             
-            pendingTasks = TaskService.shared.pendingTasks(category: category)
-            completedTasks = TaskService.shared.completedTasks(category: category)
+            pendingTasks = TaskManager.shared.pendingTasks(category: category)
+            completedTasks = TaskManager.shared.completedTasks(category: category)
         } else {
-            pendingTasks = TaskService.shared.pendingTasks()
-            completedTasks = TaskService.shared.completedTasks()
+            pendingTasks = TaskManager.shared.pendingTasks()
+            completedTasks = TaskManager.shared.completedTasks()
         }
     }
     
@@ -122,7 +122,7 @@ class TodayTaskController: UIViewController {
     private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
         let task = taskFor(indexPath: indexPath)
         task.completed = Date()
-        TaskService.shared.update(task: task)
+        TaskManager.shared.update(task: task)
         loadData()
         tableView.reloadData()
     }
@@ -130,7 +130,7 @@ class TodayTaskController: UIViewController {
     private func taskUndone(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
         let task = taskFor(indexPath: indexPath)
         task.completed = nil
-        TaskService.shared.update(task: task)
+        TaskManager.shared.update(task: task)
         loadData()
         tableView.reloadData()
     }
@@ -173,7 +173,7 @@ extension TodayTaskController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let task = taskFor(indexPath: indexPath)
-            TaskService.shared.remove(task: task)
+            TaskManager.shared.remove(task: task)
             loadData()
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
@@ -270,13 +270,13 @@ extension TodayTaskController: AddTaskSaveDelegate {
     
     
     func save(task: Task) {
-        TaskService.shared.add(task: task, category: category)
+        TaskManager.shared.add(task: task, category: category)
         loadData()
         tableView.reloadData()
     }
     
     func update(task: Task) {
-        TaskService.shared.update(task: task)
+        TaskManager.shared.update(task: task)
         loadData()
         tableView.reloadData()
     }

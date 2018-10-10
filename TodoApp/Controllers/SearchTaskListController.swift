@@ -64,9 +64,9 @@ class SearchTaskListController: UIViewController {
     
     private func loadData(){
         if showActiveTasks {
-            allTasksOfType = TaskService.shared.pendingTasks()
+            allTasksOfType = TaskManager.shared.pendingTasks()
         } else {
-            allTasksOfType = TaskService.shared.completedTasks()
+            allTasksOfType = TaskManager.shared.completedTasks()
         }
         
         if let filter = taskNameToSearch {
@@ -193,7 +193,7 @@ extension SearchTaskListController: AddTaskSaveDelegate {
     }
     
     func update(task: Task) {
-        TaskService.shared.update(task: task)
+        TaskManager.shared.update(task: task)
         loadData()
         tableView.reloadData()
     }
