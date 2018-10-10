@@ -8,7 +8,7 @@
 
 import Foundation
 
-class TaskCategory {
+struct TaskCategory {
     
     let id: String
     var name: String
@@ -20,26 +20,54 @@ class TaskCategory {
         self.name = name
     }
     
-    func add(task: Task){
-        if !tasks.contains(where: {$0.name == task.name}){
-            tasks.append(task)
-        }
+    func completedTasks() -> [Task] {
+        return tasks.filter({ $0.isCompleted })
     }
     
-    func add(tasks: [Task]){
+    func pendingTasks() -> [Task] {
+        return tasks.filter({ !$0.isCompleted })
+    }
+    
+    func tasksBy(predicate: ((Task) -> Bool)) -> [Task] {
+        return tasks.filter(predicate)
+    }
+    
+    func allTasks() -> [Task] {
+        return tasks
+    }
+    
+    
+    @discardableResult
+    mutating func add(task: Task) -> Bool {
+        if !tasks.contains(where: {$0.id == task.id}){
+            tasks.append(task)
+            return true
+        }
+        return false
+    }
+    
+    mutating func add(tasks: [Task]){
         for task in tasks {
             add(task: task)
         }
     }
     
-    func remove(task: Task){
-        if let index = tasks.index(where: {$0.name == task.name}){
+    @discardableResult
+    mutating func remove(task: Task) -> Bool {
+        if let index = tasks.index(where: {$0.id == task.id}){
             tasks.remove(at: index)
+            return true
         }
+        return false
     }
     
-    func getTasks() -> [Task] {
-        return tasks
+    @discardableResult
+    mutating func update(task: Task) -> Bool {
+        if let index = tasks.index(where: { $0.id == task.id }){
+            tasks[index] = task
+            return true
+        }
+        return false
     }
     
 }
