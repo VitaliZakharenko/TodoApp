@@ -135,6 +135,7 @@ class AddTaskController: UITableViewController {
 
     @IBAction func saveTask(_ sender: UIBarButtonItem) {
         
+         
         guard let name = taskNameTextField.text,
             let descriptionString = taskDescriptionTextView.text else {
                 fatalError("Wrong task parameters")
@@ -146,20 +147,26 @@ class AddTaskController: UITableViewController {
         guard let addDelegate = addTaskSaveDelegate else {
             fatalError("Add delegate is nil")
         }
-        if let oldTask = editedTask {
-            let updatedTask = TaskManager.shared.createTask(oldTask: oldTask, name: name, description: description, remindDate: remindDate, priority: taskPriority)
+        if let updatedTask = editedTask {
+            updatedTask.name = name
+            updatedTask.taskDescription = description
+            updatedTask.remindDate = remindDate
+            updatedTask.priority = taskPriority.rawValue
             addDelegate.update(task: updatedTask)
         } else {
             let newTask = TaskManager.shared.createTask(name: name, description: description, remindDate: remindDate, priority: taskPriority)
+            
             addDelegate.save(task: newTask)
         }
         
         navigationController?.popViewController(animated: true)
         
+        
     }
 }
 
 //MARK: Private helper methods
+
 fileprivate extension AddTaskController {
     
     private func selectPriorityRowClicked(){
@@ -230,17 +237,18 @@ fileprivate extension AddTaskController {
     
     private func fillFieldsFrom(_ editedTask: Task){
         taskNameTextField.text = editedTask.name
-        if editedTask.isReminded {
-            remindDate = editedTask.remindDate!
+        if let remindDate = editedTask.remindDate {
+            self.remindDate = remindDate
             updateRemindDateLabel()
         } else {
             remindMeSwitch.isOn = false
         }
-        taskPriority = editedTask.priority
+        taskPriority = Priority(rawValue: editedTask.priority!)!
         updatePriorityLabel()
-        taskDescriptionTextView.text = editedTask.description
+        taskDescriptionTextView.text = editedTask.taskDescription
     }
     
+            
 }
 
 //MARK: - UITextFieldDelegate

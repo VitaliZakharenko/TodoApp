@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct TaskCategory: Codable {
+struct TaskCategoryOld: Codable {
     
     let id: String
     var name: String

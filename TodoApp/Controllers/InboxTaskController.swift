@@ -5,7 +5,6 @@
 //  Created by vitali on 8/16/18.
 //  Copyright © 2018 vitcopr. All rights reserved.
 //
-
 import UIKit
 
 fileprivate struct Const {
@@ -21,14 +20,14 @@ class InboxTaskController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     
+    
     private var sortOrder: InboxSorting = .byDate(ascend: true) {
         didSet {
-            loadGroupedData()
+            reloadData()
             sortTasks(by: sortOrder)
             tableView.reloadData()
         }
     }
-    
     
     private var groupedItems: [(String, [Task])]!
     private var withoutGroup: [Task]?
@@ -98,8 +97,6 @@ class InboxTaskController: UIViewController {
 //MARK: - Private Helper Methods
 
 fileprivate extension InboxTaskController {
-    
-    
     private func configureTableView(){
         let nib = UINib(nibName: Consts.Nibs.taskCell, bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: Consts.Identifiers.taskCell)
@@ -120,8 +117,6 @@ fileprivate extension InboxTaskController {
         sortTasks(by: sortOrder)
         tableView.reloadData()
     }
-    
-    
     
     private func taskFor(indexPath: IndexPath) -> Task {
         
@@ -172,14 +167,14 @@ fileprivate extension InboxTaskController {
     }
     
     private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
-        var task = taskFor(indexPath: indexPath)
+        let task = taskFor(indexPath: indexPath)
         task.completed = Date()
         TaskManager.shared.update(task: task)
         reloadData()
     }
     
     private func taskUndone(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
-        var task = taskFor(indexPath: indexPath)
+        let task = taskFor(indexPath: indexPath)
         task.completed = nil
         TaskManager.shared.update(task: task)
         reloadData()
@@ -198,7 +193,7 @@ fileprivate extension InboxTaskController {
     
     private func configure(cell: TaskCell, task: Task) -> TaskCell {
         cell.taskNameLabel.text = task.name
-        cell.taskDescriptionLabel.text = task.description ?? Consts.Text.noDescriptionText
+        cell.taskDescriptionLabel.text = task.taskDescription ?? Consts.Text.noDescriptionText
         cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Consts.Text.noReminderText
         return cell
     }
@@ -206,7 +201,6 @@ fileprivate extension InboxTaskController {
 }
 
 //MARK: - UITableViewDelegate
-
 extension InboxTaskController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
@@ -221,7 +215,7 @@ extension InboxTaskController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         
         let task = taskFor(indexPath: indexPath)
-            
+        
         let storyboard = UIStoryboard(name: Consts.Storyboards.main, bundle: Bundle.main)
         let editTaskController = storyboard.instantiateViewController(withIdentifier: Consts.Identifiers.addTaskController) as! AddTaskController
         editTaskController.addTaskSaveDelegate = self
@@ -237,22 +231,22 @@ extension InboxTaskController: UITableViewDelegate {
         
         let task = taskFor(indexPath: indexPath)
         let doneOrUndoneAction: UITableViewRowAction = {
-            switch task.isCompleted {
-            case false:
+            switch task.completed {
+            case nil:
                 return UITableViewRowAction(style: .normal, title: Consts.Text.done, handler: self.taskDone)
-            case true:
+            case _:
                 return UITableViewRowAction(style: .normal, title: Consts.Text.undone, handler: self.taskUndone)
             }
         }()
         return [deleteAction, doneOrUndoneAction]
     }
-
+    
     
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch sortOrder {
         case .byDate(_):
-            if withoutGroup != nil && section == (numberOfSections(in: tableView) - 1) {
+            if withoutGroup == nil && section == (numberOfSections(in: tableView) - 1) {
                 return Const.noReminderSectionTitle
             } else {
                 let sectionDate =  groupedItems[section].0
@@ -282,7 +276,6 @@ extension InboxTaskController: UITableViewDelegate {
 }
 
 //MARK: - UITableViewDataSource
-
 extension InboxTaskController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -310,7 +303,6 @@ extension InboxTaskController: UITableViewDataSource {
 }
 
 //MARK: - AddTaskSaveDelegate
-
 extension InboxTaskController: AddTaskSaveDelegate {
     func save(task: Task) {
         TaskManager.shared.add(task: task)
@@ -324,3 +316,4 @@ extension InboxTaskController: AddTaskSaveDelegate {
     
     
 }
+

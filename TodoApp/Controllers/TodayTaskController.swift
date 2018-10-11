@@ -94,16 +94,12 @@ fileprivate extension TodayTaskController {
         tableView.tableFooterView = UIView()
     }
     
-    private func loadData(updatedCategory: TaskCategory? = nil){
+    private func loadData(){
         
-        if var category = category {
+        if let category = category {
             
-            if let updated = updatedCategory {
-                self.category = updated
-                category = updated
-            }
-            pendingTasks = category.pendingTasks()
-            completedTasks = category.completedTasks()
+            pendingTasks = TaskManager.shared.pendingTasks(category: category)
+            completedTasks = TaskManager.shared.completedTasks(category: category)
         } else {
             pendingTasks = TaskManager.shared.pendingTasks()
             completedTasks = TaskManager.shared.completedTasks()
@@ -127,18 +123,18 @@ fileprivate extension TodayTaskController {
     }
     
     private func taskDone(_ rowAction: UITableViewRowAction, indexPath: IndexPath) {
-        var task = taskFor(indexPath: indexPath)
+        let task = taskFor(indexPath: indexPath)
         task.completed = Date()
-        let updated = TaskManager.shared.update(task: task)
-        loadData(updatedCategory: updated)
+        TaskManager.shared.update(task: task)
+        loadData()
         tableView.reloadData()
     }
     
     private func taskUndone(_ rowAction: UITableViewRowAction, indexPath: IndexPath){
-        var task = taskFor(indexPath: indexPath)
+        let task = taskFor(indexPath: indexPath)
         task.completed = nil
-        let updated = TaskManager.shared.update(task: task)
-        loadData(updatedCategory: updated)
+        TaskManager.shared.update(task: task)
+        loadData()
         tableView.reloadData()
     }
     
@@ -156,7 +152,7 @@ fileprivate extension TodayTaskController {
     
     private func configure(cell: TaskCell, task: Task) -> TaskCell {
         cell.taskNameLabel.text = task.name
-        cell.taskDescriptionLabel.text = task.description ?? Consts.Text.noDescriptionText
+        cell.taskDescriptionLabel.text = task.taskDescription ?? Consts.Text.noDescriptionText
         cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Consts.Text.noReminderText
         return cell
     }
@@ -186,8 +182,8 @@ extension TodayTaskController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let task = taskFor(indexPath: indexPath)
-            let updated = TaskManager.shared.remove(task: task)
-            loadData(updatedCategory: updated)
+            TaskManager.shared.remove(task: task)
+            loadData()
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
@@ -277,14 +273,14 @@ extension TodayTaskController: AddTaskSaveDelegate {
     
     
     func save(task: Task) {
-        let updated = TaskManager.shared.add(task: task, category: category)
-        loadData(updatedCategory: updated)
+        TaskManager.shared.add(task: task, category: category)
+        loadData()
         tableView.reloadData()
     }
     
     func update(task: Task) {
-        let updated = TaskManager.shared.update(task: task)
-        loadData(updatedCategory: updated)
+        TaskManager.shared.update(task: task)
+        loadData()
         tableView.reloadData()
     }
 }

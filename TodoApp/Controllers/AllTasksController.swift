@@ -132,7 +132,7 @@ fileprivate extension AllTasksController {
     }
     
     private func newCategoryNameEntered(newName: String, for indexPath: IndexPath){
-        var category = taskCategory(for: indexPath)
+        let category = taskCategory(for: indexPath)
         category.name = newName
         TaskManager.shared.update(category: category)
         loadData()
@@ -141,7 +141,7 @@ fileprivate extension AllTasksController {
     
     private func configure(categoryCell cell: CategoryCell, category: TaskCategory) -> CategoryCell {
         cell.categoryNameLabel.text = category.name
-        cell.numberOfTasksLabel.text = "(\(category.allTasks().count))"
+        cell.numberOfTasksLabel.text = "(\(category.tasks!.count))"
         return cell
     }
 }

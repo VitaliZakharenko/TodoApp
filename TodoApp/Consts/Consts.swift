@@ -48,4 +48,21 @@ struct Consts {
     struct Categories {
         static let inboxName = "Inbox"
     }
+    
+    struct TaskAttrs {
+        static let completed = "completed"
+        static let name = "name"
+        static let priority = "priority"
+        static let remindDate = "remindDate"
+        static let description = "taskDescription"
+    }
+    
+    struct TaskCategoryAttrs {
+        static let name = "name"
+        static let tasks = "tasks"
+    }
+    
+    struct CoreData {
+        static let ModelName = "Model"
+    }
 }

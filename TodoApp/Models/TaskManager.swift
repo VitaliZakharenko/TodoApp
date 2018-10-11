@@ -7,64 +7,162 @@
 //
 
 import Foundation
+import CoreData
+
+
+fileprivate struct Const {
+    
+    static let persistentStoreFileName = Consts.CoreData.ModelName + ".sqlite"
+    
+}
 
 class TaskManager {
     
-    static let shared = TaskManager()
+    
+    static var shared: TaskManager!
+    
+    
+    //MARK: CoreData Stack
+    
+    
+    private lazy var managedObjectModel: NSManagedObjectModel = {
+        guard let modelURL = Bundle.main.url(forResource: Consts.CoreData.ModelName, withExtension: "momd") else {
+            fatalError("Compiled model file not found")
+        }
+        
+        guard let managedObjectModel = NSManagedObjectModel(contentsOf: modelURL) else {
+            fatalError("Unable to read managed object model from specified url: \(modelURL)")
+        }
+        
+        return managedObjectModel
+    } ()
+    
+    
+    private lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
+        
+        let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
+        
+        let documentDirectoryUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let persistenStoreUrl = documentDirectoryUrl.appendingPathComponent(Const.persistentStoreFileName)
+        
+        do {
+            try persistentStoreCoordinator.addPersistentStore(ofType: NSSQLiteStoreType,
+                                                          configurationName: nil, at: persistenStoreUrl,
+                                                          options: nil)
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+        return persistentStoreCoordinator
+    } ()
+    
+    
+    lazy var managedObjectContext: NSManagedObjectContext = {
+        let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        
+        managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator
+        
+        return managedObjectContext
+    } ()
+    
+    
+    
+    //MARK: - Properties
     
     private var categories = [TaskCategory]()
     private var inboxCategory: TaskCategory!
     
-    private var dataStorage: DataStorage
     
+    
+    //MARK: - Initialization
     
     init(){
         
-        dataStorage = FileDataStorage(filename: "AllTasks")
-        
-        var allCategories = dataStorage.allCategories()
-        if allCategories.isEmpty {
-            inboxCategory = createCategory(name: Consts.Categories.inboxName)
-            categories = predefinedCategories()
-            
-            dataStorage.add(category: inboxCategory)
-            for item in categories {
-                dataStorage.add(category: item)
+        let categoryfetchRequest: NSFetchRequest<TaskCategory> = TaskCategory.fetchRequest()
+        managedObjectContext.performAndWait {
+            do {
+                let categoriesSet = try categoryfetchRequest.execute()
+
+                if categoriesSet.count == 0 {
+                    addFirstRunData()
+                    try managedObjectContext.save()
+                } else {
+                    self.categories = categoriesSet
+                    
+                    if let index = categoriesSet.index(where: { $0.name == Consts.Categories.inboxName }){
+                        inboxCategory = categories[index]
+                    } else {
+                        fatalError("Inbox category not found")
+                    }
+                    
+                }
+            } catch {
+                fatalError("Unable to execute fetch request or save data: \(error.localizedDescription)")
             }
-        } else {
-            guard let index = allCategories.index(where: {$0.name == Consts.Categories.inboxName }) else {
-                fatalError("Inbox category does not exist")
-            }
-            inboxCategory = allCategories[index]
-            allCategories.remove(at: index)
-            categories = allCategories
         }
-        
     }
+    
+    private func addFirstRunData(){
+        
+        let inboxCategory = createCategory(name: Consts.Categories.inboxName)
+        
+        let predefinedTasks = predefinedTestTasks()
+        inboxCategory.addToTasks(NSSet(array: predefinedTasks))
+        managedObjectContext.insert(inboxCategory)
+        categories.append(inboxCategory)
+        self.inboxCategory = inboxCategory
+    }
+    
+    
+    //MARK: - Creation Methods
+    
+    func createTask(name: String, description: String?, remindDate: Date?, priority: Priority = .none) -> Task {
+        let task = Task(context: managedObjectContext)
+        task.name = name
+        task.taskDescription = description
+        task.remindDate = remindDate
+        task.priority = priority.rawValue
+        return task
+    }
+    
+    
+    func createCategory(name: String) -> TaskCategory {
+        let category = TaskCategory(context: managedObjectContext)
+        category.name = name
+        return category
+    }
+    
+    //MARK: - Service Main Methods
     
     func allCategories() -> [TaskCategory]{
-        var all = categories
-        all.append(inboxCategory)
-        return all
+        return categories
     }
     
-    func completedTasks() -> [Task] {
-        var tasks = [Task]()
-        tasks.append(contentsOf: inboxCategory.completedTasks())
-        for category in categories {
-            tasks.append(contentsOf: category.completedTasks())
-        }
-        return tasks
+    func completedTasks(category: TaskCategory? = nil) -> [Task] {
+        
+        let tasks: [Task] = {
+            if let category = category {
+                return category.tasks!.allObjects as! [Task]
+            } else {
+                return allTasks()
+            }
+        } ()
+        
+        return tasks.filter({ $0.completed != nil })
+        
     }
     
-    func pendingTasks() -> [Task] {
-        var tasks = [Task]()
-        tasks.append(contentsOf: inboxCategory.pendingTasks())
-        for category in categories {
-            tasks.append(contentsOf: category.pendingTasks())
-        }
-        return tasks
+    func pendingTasks(category: TaskCategory? = nil) -> [Task] {
+        
+        let tasks: [Task] = {
+            if let category = category {
+                return category.tasks!.allObjects as! [Task]
+            } else {
+                return allTasks()
+            }
+        } ()
+        return tasks.filter({ $0.completed == nil })
     }
+    
     
     func tasksBy(predicate: ((Task) -> Bool)) -> [Task] {
         return allTasks().filter(predicate)
@@ -72,105 +170,101 @@ class TaskManager {
     
     func allTasks() -> [Task] {
         var tasks = [Task]()
-        tasks.append(contentsOf: inboxCategory.allTasks())
         for category in categories {
-            tasks.append(contentsOf: category.allTasks())
+            tasks.append(contentsOf: category.tasks!.allObjects as! [Task])
         }
         return tasks
     }
     
     //MARK: - Tasks
     
-    func createTask(name: String, description: String?, remindDate: Date?, priority: Priority = .none) -> Task {
-        return Task(id: UUID().uuidString, name: name, description: description, remindDate: remindDate, priority: priority)
-    }
     
-    func createTask(oldTask: Task, name: String, description: String?, remindDate: Date?, priority: Priority = .none) -> Task {
-        return Task(id: oldTask.id, name: name, description: description, remindDate: remindDate, priority: priority)
-    }
-    
-    @discardableResult
-    func add(task: Task, category: TaskCategory? = nil) -> TaskCategory? {
+    func add(task: Task, category: TaskCategory? = nil) {
         if let category = category {
-            for (idx, serviceCategory) in categories.enumerated() {
-                if serviceCategory.id == category.id {
-                    categories[idx].add(task: task)
-                    dataStorage.update(category: categories[idx])
-                    return categories[idx]
-                }
+            if let index = categories.index(where: { $0 == category }){
+                categories[index].addToTasks(task)
+                saveCoreDataChanges()
+            } else {
+                fatalError("Category not exists")
             }
-            return nil
         } else {
-            inboxCategory.add(task: task)
-            dataStorage.update(category: inboxCategory)
-            return inboxCategory
+            inboxCategory.addToTasks(task)
+            saveCoreDataChanges()
         }
     }
     
-    @discardableResult
-    func remove(task: Task) -> TaskCategory? {
-        inboxCategory.remove(task: task)
-        for (idx, _) in categories.enumerated() {
-            if(categories[idx].remove(task: task)){
-                dataStorage.update(category: categories[idx])
-                return categories[idx]
-            }
+    
+    func remove(task: Task, from category: TaskCategory? = nil) {
+        if let category = category {
+            remove(task: task, fromCategory: category)
         }
-        return nil
+        else {
+            for category in categories {
+                remove(task: task, fromCategory: category)
+        }
+        managedObjectContext.delete(task)
+        saveCoreDataChanges()
+        }
+    }
+    
+    private func remove(task: Task, fromCategory category: TaskCategory){
+        let tasks = category.tasks!.allObjects as! [Task]
+        if let index = tasks.index(where: { $0.objectID == task.objectID }){
+            category.removeFromTasks(tasks[index])
+        }
     }
     
     
-    @discardableResult
-    func update(task: Task) -> TaskCategory? {
-        inboxCategory.update(task: task)
-        for (idx, _) in categories.enumerated(){
-            if(categories[idx].update(task: task)){
-                dataStorage.update(category: categories[idx])
-                return categories[idx]
-            }
-        }
-        return nil
+    func update(task: Task){
+        saveCoreDataChanges()
     }
     
     
     //MARK: - Categories
     
-    
-    func createCategory(name: String) -> TaskCategory {
-        return TaskCategory(id: UUID().uuidString, name: name)
-    }
-    
-    
     func add(category: TaskCategory){
-        if categories.index(where: { $0.id == category.id }) != nil {
+        
+        if let _ = categories.index(where: { $0 == category }){
             return
-        } else {
-            categories.append(category)
-            dataStorage.add(category: category)
         }
+        managedObjectContext.insert(category)
+        categories.append(category)
+        saveCoreDataChanges()
     }
     
     func update(category: TaskCategory){
-        if let index = categories.index(where: { $0.id == category.id }) {
-            categories[index] = category
-            dataStorage.update(category: category)
-        }
+        saveCoreDataChanges()
     }
     
     func remove(category: TaskCategory){
-        if let index = categories.index(where: { $0.id == category.id }) {
+        if let index = categories.index(where: { $0 == category }){
             categories.remove(at: index)
-            dataStorage.remove(category: category)
+            managedObjectContext.delete(category)
+            saveCoreDataChanges()
         }
     }
     
+    //MARK: - Core Data related
+    
+    private func saveCoreDataChanges(){
+        do {
+            try managedObjectContext.save()
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+    
+    //MARK: - Grouping
+    
+    
+    //MARK: - Methods to create test data
     
     private func predefinedTestTasks() -> [Task] {
         let t1 = createTask(name: "First", description: nil, remindDate: Date())
         let t2 = createTask(name: "Second", description: nil, remindDate: nil)
         let t3 = createTask(name: "TestTask", description: nil, remindDate: Date(timeIntervalSinceNow: 86400))
         let t4 = createTask(name: "TestTask", description: nil, remindDate: Date(timeIntervalSinceNow: 86400 * 2))
-        var t5 = createTask(name: "TestTask", description: nil, remindDate: Date())
+        let t5 = createTask(name: "TestTask", description: nil, remindDate: Date())
         t5.completed = Date()
         let t6 = createTask(name: "TestTask6", description: nil, remindDate: Date())
         let t7 = createTask(name: "TestTask7", description: nil, remindDate: Date())
@@ -179,14 +273,14 @@ class TaskManager {
     }
     
     private func predefinedCategories() -> [TaskCategory] {
-        var category1 = createCategory(name: "Work")
+        let category1 = createCategory(name: "Work")
         let task1 = createTask(name: "WorkCategoryTask1", description: "Work", remindDate: Date())
         let task2 = createTask(name: "WorkCategoryTask2", description: "WorkTask2", remindDate: nil)
-        category1.add(tasks: [task1, task2])
-        var category2 = createCategory(name: "Blablabla")
+        category1.addToTasks([task1, task2])
+        let category2 = createCategory(name: "Blablabla")
         let blabla1 = createTask(name: "Blabla1", description: nil, remindDate: Date())
         let blabla2 = createTask(name: "Blabla2", description: "Blablabla", remindDate: Date())
-        category2.add(tasks: [blabla1, blabla2])
+        category2.addToTasks([blabla1, blabla2])
         return [category1, category2]
     }
 }
@@ -199,8 +293,8 @@ extension TaskManager {
     func groupedTasks(by sortOrder: InboxSorting) -> ([(String, [Task])], [Task]?) {
         switch sortOrder {
         case .byDate(ascend: _):
-            let withReminder = allTasks().filter({ $0.isReminded })
-            let withoutReminder = allTasks().filter({ !$0.isReminded })
+            let withReminder = allTasks().filter({ $0.remindDate != nil })
+            let withoutReminder = allTasks().filter({ $0.remindDate == nil })
             let withoutGroup = withoutReminder
             let groupedItems = groupByRemindDate(tasksWithReminder: withReminder)
             return (groupedItems, withoutGroup)
@@ -228,8 +322,9 @@ extension TaskManager {
     private func groupByCategory(categories: [TaskCategory]) -> [(String, [Task])]{
         var items = [(String, Task)]()
         for category in categories {
-            for task in category.allTasks() {
-                let item = (category.name, task)
+            let tasks = category.tasks!.allObjects as! [Task]
+            for task in tasks {
+                let item = (category.name!, task)
                 items.append(item)
             }
         }
