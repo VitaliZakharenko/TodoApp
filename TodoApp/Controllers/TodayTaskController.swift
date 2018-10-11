@@ -62,9 +62,18 @@ class TodayTaskController: UIViewController {
         }
     }
     
+    //MARK: - Callbacks
     
-    //MARK: - Private Methods
+    @objc func backBarItemClicked(){
+        navigationController?.popViewController(animated: true)
+    }
     
+}
+
+
+//MARK: - Private Helper Methods
+
+fileprivate extension TodayTaskController {
     
     private func configureNavbar(){
         
@@ -76,12 +85,6 @@ class TodayTaskController: UIViewController {
             navigationItem.leftBarButtonItem = editButtonItem
         }
     }
-    
-    
-    @objc func backBarItemClicked(){
-        navigationController?.popViewController(animated: true)
-    }
-    
     
     private func configureTableView(){
         let nib = UINib(nibName: Consts.Nibs.taskCell, bundle: nil)
@@ -147,8 +150,14 @@ class TodayTaskController: UIViewController {
         present(alertController, animated: true, completion: nil)
     }
     
+    private func configure(cell: TaskCell, task: Task) -> TaskCell {
+        cell.taskNameLabel.text = task.name
+        cell.taskDescriptionLabel.text = task.taskDescription ?? Consts.Text.noDescriptionText
+        cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Consts.Text.noReminderText
+        return cell
+    }
     
-
+    
 }
 
 //MARK: - UITableViewDelegate
@@ -251,15 +260,9 @@ extension TodayTaskController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let cell = self.tableView.dequeueReusableCell(withIdentifier: Consts.Identifiers.taskCell, for: indexPath) as! TaskCell
-        
         let task = taskFor(indexPath: indexPath)
-        
-        cell.taskNameLabel.text = task.name
-        cell.taskDescriptionLabel.text = task.taskDescription ?? Consts.Text.noDescriptionText
-        cell.taskDateLabel.text = task.remindDate != nil ? task.remindDate!.formattedString() : Consts.Text.noReminderText
-        return cell
+        return configure(cell: cell, task: task)
     }
 }
 

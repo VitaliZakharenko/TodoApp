@@ -54,6 +54,14 @@ class AllTasksController: UIViewController {
         }
     }
     
+    
+}
+
+
+//MARK: Private Helper Methods
+
+fileprivate extension AllTasksController {
+    
     //MARK: - Private Methods
     
     private func taskCategory(for indexPath: IndexPath) -> TaskCategory {
@@ -63,14 +71,14 @@ class AllTasksController: UIViewController {
             return otherCategories[indexPath.row - 1]
         }
     }
-
-
+    
+    
     private func loadData(){
         let allCategories = TaskManager.shared.allCategories()
         otherCategories = allCategories.filter({ $0.name != Consts.Categories.inboxName })
         inboxCategory = allCategories.first(where: { $0.name == Consts.Categories.inboxName})!
     }
-
+    
     private func configureTableView(){
         let nibCategory = UINib(nibName: Consts.Nibs.categoryCell, bundle: nil)
         tableView.register(nibCategory, forCellReuseIdentifier: Consts.Identifiers.categoryCell)
@@ -117,7 +125,7 @@ class AllTasksController: UIViewController {
         let done = UIAlertAction(title: Consts.Text.done, style: .default, handler: { (alertAction) in
             guard let textField = alertController.textFields?.first else { return }
             self.newCategoryNameEntered(newName: textField.text!, for: indexPath)
-            })
+        })
         alertController.addAction(done)
         present(alertController, animated: true, completion: nil)
         
@@ -130,8 +138,13 @@ class AllTasksController: UIViewController {
         loadData()
         tableView.reloadData()
     }
+    
+    private func configure(categoryCell cell: CategoryCell, category: TaskCategory) -> CategoryCell {
+        cell.categoryNameLabel.text = category.name
+        cell.numberOfTasksLabel.text = "(\(category.tasks!.count))"
+        return cell
+    }
 }
-
 
 //MARK: - UITableViewDelegate
 
@@ -223,13 +236,8 @@ extension AllTasksController: UITableViewDataSource {
             return cell
         } else {
             let cell = self.tableView.dequeueReusableCell(withIdentifier: Consts.Identifiers.categoryCell, for: indexPath) as! CategoryCell
-            
             let currCategory = taskCategory(for: indexPath)
-            
-            cell.categoryNameLabel.text = currCategory.name
-            cell.numberOfTasksLabel.text = "(\(currCategory.tasks!.count))"
-            
-            return cell
+            return configure(categoryCell: cell, category: currCategory)
         }
         
     }

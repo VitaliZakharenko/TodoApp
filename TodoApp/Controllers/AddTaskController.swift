@@ -8,6 +8,16 @@
 
 import UIKit
 
+
+fileprivate struct Const {
+    static let navbarTitileAdd = "Add Item"
+    static let navbarTitleEdit = "Edit Item"
+    static let selectPriorityTitle = "Select Priority"
+    static let nibSelectDate = "SelectDate"
+    static let dateFormatString = "EEEE, d MMM yyyy, HH:mm"
+}
+
+
 class AddTaskController: UITableViewController {
     
     // MARK: - Properties
@@ -106,7 +116,58 @@ class AddTaskController: UITableViewController {
     }
     
     
-    //MARK: - Private Methods
+    
+    //MARK: - Callbacks
+    
+    @objc private func dismissTextViewKeyboard(_ sender: UITapGestureRecognizer) {
+        taskDescriptionTextView.endEditing(true)
+        let _ = textFieldShouldReturn(taskNameTextField)
+    }
+    
+    
+    // MARK: - Actions
+    
+    @IBAction func backToTaskList(_ sender: UIBarButtonItem) {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    
+
+    @IBAction func saveTask(_ sender: UIBarButtonItem) {
+        
+         
+        guard let name = taskNameTextField.text,
+            let descriptionString = taskDescriptionTextView.text else {
+                fatalError("Wrong task parameters")
+        }
+        let description = descriptionString.isEmpty ? nil : descriptionString
+        let remindDate = remindMeSwitch.isOn ? self.remindDate : nil
+        
+        
+        guard let addDelegate = addTaskSaveDelegate else {
+            fatalError("Add delegate is nil")
+        }
+        if let updatedTask = editedTask {
+            updatedTask.name = name
+            updatedTask.taskDescription = description
+            updatedTask.remindDate = remindDate
+            updatedTask.priority = taskPriority.rawValue
+            addDelegate.update(task: updatedTask)
+        } else {
+            let newTask = TaskManager.shared.createTask(name: name, description: description, remindDate: remindDate, priority: taskPriority)
+            
+            addDelegate.save(task: newTask)
+        }
+        
+        navigationController?.popViewController(animated: true)
+        
+        
+    }
+}
+
+//MARK: Private helper methods
+
+fileprivate extension AddTaskController {
     
     private func selectPriorityRowClicked(){
         showSelectPriorityController()
@@ -136,7 +197,7 @@ class AddTaskController: UITableViewController {
     private func selectTaskPriority(alert: UIAlertAction){
         guard let priorityString = alert.title,
             priorityString != Consts.Text.cancel else {
-            return
+                return
         }
         
         if let priority = Priority(rawValue: priorityString) {
@@ -165,10 +226,6 @@ class AddTaskController: UITableViewController {
         tableView.addGestureRecognizer(gestureRecognizer)
     }
     
-    @objc private func dismissTextViewKeyboard(_ sender: UITapGestureRecognizer) {
-        taskDescriptionTextView.endEditing(true)
-        let _ = textFieldShouldReturn(taskNameTextField)
-    }
     
     private func configureTitle(){
         if editedTask == nil {
@@ -191,44 +248,7 @@ class AddTaskController: UITableViewController {
         taskDescriptionTextView.text = editedTask.taskDescription
     }
     
-    
-    // MARK: - Actions
-    
-    @IBAction func backToTaskList(_ sender: UIBarButtonItem) {
-        navigationController?.popViewController(animated: true)
-    }
-    
-
-    @IBAction func saveTask(_ sender: UIBarButtonItem) {
-        
-        guard let name = taskNameTextField.text,
-            let descriptionString = taskDescriptionTextView.text else {
-                fatalError("Wrong task parameters")
-        }
-        let description = descriptionString.isEmpty ? nil : descriptionString
-        let remindDate = remindMeSwitch.isOn ? self.remindDate : nil
-        
-        
-        guard let addDelegate = addTaskSaveDelegate else {
-            fatalError("Add delegate is nil")
-        }
-        if let updatedTask = editedTask {
-            updatedTask.name = name
-            updatedTask.taskDescription = description
-            updatedTask.remindDate = remindDate
-            updatedTask.priority = taskPriority.rawValue
-            addDelegate.update(task: updatedTask)
-        } else {
-            let newTask = TaskManager.shared.createTask(name: name, description: description, remindDate: remindDate, priority: taskPriority)
             
-            addDelegate.save(task: newTask)
-        }
-        
-        navigationController?.popViewController(animated: true)
-        
-    }
-    
-    
 }
 
 //MARK: - UITextFieldDelegate
@@ -280,10 +300,3 @@ extension AddTaskController: SelectDateDelegate {
     
 }
 
-fileprivate struct Const {
-    static let navbarTitileAdd = "Add Item"
-    static let navbarTitleEdit = "Edit Item"
-    static let selectPriorityTitle = "Select Priority"
-    static let nibSelectDate = "SelectDate"
-    static let dateFormatString = "EEEE, d MMM yyyy, HH:mm"
-}
