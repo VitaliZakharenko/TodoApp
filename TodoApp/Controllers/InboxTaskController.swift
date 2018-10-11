@@ -246,7 +246,7 @@ extension InboxTaskController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch sortOrder {
         case .byDate(_):
-            if withoutGroup == nil && section == (numberOfSections(in: tableView) - 1) {
+            if withoutGroup != nil && section == (numberOfSections(in: tableView) - 1) {
                 return Const.noReminderSectionTitle
             } else {
                 let sectionDate =  groupedItems[section].0
