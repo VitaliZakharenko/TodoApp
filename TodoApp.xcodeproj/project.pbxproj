@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		F830267F211C4361007638FD /* AddTaskSaveDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F830267E211C4361007638FD /* AddTaskSaveDelegate.swift */; };
 		F83316FE2138075F007FA60B /* String+NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83316FD2138075F007FA60B /* String+NSAttributedString.swift */; };
+		F8352F68216F361A00BCA1C3 /* Consts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8352F67216F361A00BCA1C3 /* Consts.swift */; };
 		F8362DE52126B9C0009699DA /* InboxSorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8362DE42126B9C0009699DA /* InboxSorting.swift */; };
 		F8367AB12117277D008C4E6C /* TaskCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8367AB02117277D008C4E6C /* TaskCell.xib */; };
 		F8367AB321199950008C4E6C /* AddTaskController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8367AB221199950008C4E6C /* AddTaskController.swift */; };
@@ -63,6 +64,7 @@
 /* Begin PBXFileReference section */
 		F830267E211C4361007638FD /* AddTaskSaveDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskSaveDelegate.swift; sourceTree = "<group>"; };
 		F83316FD2138075F007FA60B /* String+NSAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+NSAttributedString.swift"; sourceTree = "<group>"; };
+		F8352F67216F361A00BCA1C3 /* Consts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Consts.swift; sourceTree = "<group>"; };
 		F8362DE42126B9C0009699DA /* InboxSorting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxSorting.swift; sourceTree = "<group>"; };
 		F8367AB02117277D008C4E6C /* TaskCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TaskCell.xib; sourceTree = "<group>"; };
 		F8367AB221199950008C4E6C /* AddTaskController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskController.swift; sourceTree = "<group>"; };
@@ -265,6 +267,7 @@
 			children = (
 				F87F54EA21108E2E00ED206E /* TodoAppUITests.swift */,
 				F87F54EC21108E2E00ED206E /* Info.plist */,
+				F8352F67216F361A00BCA1C3 /* Consts.swift */,
 			);
 			path = TodoAppUITests;
 			sourceTree = "<group>";
@@ -457,6 +460,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F87F54EB21108E2E00ED206E /* TodoAppUITests.swift in Sources */,
+				F8352F68216F361A00BCA1C3 /* Consts.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -147,6 +147,9 @@
                                 <rect key="frame" x="0.0" y="64" width="320" height="455"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <sections/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="taskListId"/>
+                                </userDefinedRuntimeAttributes>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -160,6 +163,9 @@
                     </view>
                     <navigationItem key="navigationItem" title="Today" id="E70-cC-RiZ">
                         <barButtonItem key="rightBarButtonItem" image="right_add_detail" id="xu8-uy-VBH">
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="addTaskId"/>
+                            </userDefinedRuntimeAttributes>
                             <connections>
                                 <segue destination="wiQ-GD-fJh" kind="show" identifier="ShowAddTaskSegue" id="fG5-rH-0pD"/>
                             </connections>
@@ -193,6 +199,7 @@
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="What you have to do..." textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="JKB-Lu-PDW">
                                                     <rect key="frame" x="5" y="5" width="310" height="33.5"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="taskNameTextFieldId"/>
                                                     <nil key="textColor"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <textInputTraits key="textInputTraits" returnKeyType="done"/>
@@ -219,6 +226,7 @@
                                             <subviews>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sri-S2-vit">
                                                     <rect key="frame" x="261" y="6" width="51" height="31"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="taskRemindDateSwitchId"/>
                                                 </switch>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Remind Me On Day" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="azb-37-mTk">
                                                     <rect key="frame" x="21" y="11" width="146.5" height="21"/>
@@ -273,6 +281,7 @@
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="None" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YCp-fP-BlS">
                                                     <rect key="frame" x="227" y="11" width="41" height="21"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="taskPriorityLabelId"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
@@ -300,6 +309,7 @@
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="rGB-Iz-gcI">
                                                     <rect key="frame" x="5" y="5" width="310" height="33.5"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="taskDescriptionTextViewId"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 </textView>
@@ -315,6 +325,9 @@
                                 </cells>
                             </tableViewSection>
                         </sections>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="addTaskTableViewId"/>
+                        </userDefinedRuntimeAttributes>
                         <connections>
                             <outlet property="dataSource" destination="wiQ-GD-fJh" id="1w0-z3-t9V"/>
                             <outlet property="delegate" destination="wiQ-GD-fJh" id="zO2-rJ-xnM"/>
@@ -322,11 +335,17 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="AddItem" id="N6j-9x-yuW">
                         <barButtonItem key="leftBarButtonItem" title="Back" id="U74-ye-8em">
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="backId"/>
+                            </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="backToTaskList:" destination="wiQ-GD-fJh" id="Suf-tI-O1K"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="done" id="FCm-Jk-R94">
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="doneId"/>
+                            </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="saveTask:" destination="wiQ-GD-fJh" id="XH7-jn-kRD"/>
                             </connections>
@@ -445,6 +464,9 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="keyPath" value="YES"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <segue destination="hMb-oT-CTp" kind="relationship" relationship="rootViewController" id="OG0-PH-dKg"/>
                     </connections>
@@ -561,6 +583,9 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="keyPath" value="YES"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <segue destination="4cQ-HB-x9j" kind="relationship" relationship="rootViewController" id="kjv-yM-gdv"/>
                     </connections>
@@ -583,6 +608,6 @@
         <image name="right_sort" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="mRp-4b-IWF"/>
+        <segue reference="fG5-rH-0pD"/>
     </inferredMetricsTieBreakers>
 </document>

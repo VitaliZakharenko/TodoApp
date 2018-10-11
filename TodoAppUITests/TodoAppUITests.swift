@@ -9,28 +9,86 @@
 import XCTest
 
 class TodoAppUITests: XCTestCase {
+    
+    var app: XCUIApplication!
+    
+    
         
     override func setUp() {
         super.setUp()
-        
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-        
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-        // UI tests must launch the application that they test. Doing this in setup will make sure it happens for each test method.
-        XCUIApplication().launch()
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+        app = XCUIApplication()
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
     
-    func testExample() {
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    
+    func testCreateTaskFromTodayScreenWithDescription(){
+        app.launch()
+        
+        let todayTableView = app.tables[Consts.TodayTaskController.taskListTableView]
+        
+        let cellCount = todayTableView.cells.count
+        
+        app.buttons[Consts.TodayTaskController.addTask].tap()
+        
+        let back = app.buttons[Consts.AddTaskController.back]
+        let done = app.buttons[Consts.AddTaskController.done]
+        XCTAssertTrue(back.exists)
+        XCTAssertTrue(done.exists)
+        let taskName = app.textFields[Consts.AddTaskController.taskName]
+        let taskDescription = app.textViews[Consts.AddTaskController.taskDescription]
+        
+        
+        taskName.tap()
+        taskName.typeText("New Test Task")
+        taskName.typeText("\n")
+        
+        taskDescription.tap()
+        taskDescription.typeText("Descr")
+        done.tap()
+        
+        let newCellCount = todayTableView.cells.count
+        
+        XCTAssertTrue((cellCount + 1) == newCellCount)
+        
+        app.terminate()
+    }
+    
+    
+    func testTapBackWhenAddNewTask(){
+        
+        app.launch()
+        
+        let todayTableView = app.tables[Consts.TodayTaskController.taskListTableView]
+        let cellCount = todayTableView.cells.count
+        app.buttons[Consts.TodayTaskController.addTask].tap()
+        XCTAssertTrue(app.tables[Consts.AddTaskController.addTaskTableView].exists)
+        app.buttons[Consts.AddTaskController.back].tap()
+        XCTAssertTrue(todayTableView.exists)
+        let newCellCount = todayTableView.cells.count
+        
+        XCTAssertTrue(cellCount == newCellCount)
+        
+        app.terminate()
+    }
+    
+    func testAllScreens() {
+        
+        app.launch()
+        let tapbar = app.tabBars.firstMatch
+        let today = tapbar.buttons.element(boundBy: 0)
+        let inbox = tapbar.buttons.element(boundBy: 1)
+        let todo = tapbar.buttons.element(boundBy: 2)
+        let search = tapbar.buttons.element(boundBy: 3)
+        
+        inbox.tap()
+        todo.tap()
+        search.tap()
+        today.tap()
+        app.terminate()
     }
     
 }
